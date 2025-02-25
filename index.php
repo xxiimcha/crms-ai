@@ -16,40 +16,50 @@
 
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <style>
+        .card {
+            border-radius: 15px;
+        }
+        .btn-user {
+            font-size: 1.1rem;
+            padding: 12px;
+        }
+        .form-control-user {
+            border-radius: 10px;
+        }
+        .login-container {
+            max-width: 450px;
+            margin: auto;
+        }
+    </style>
 </head>
 
 <body class="bg-gradient-primary">
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-xl-10 col-lg-12 col-md-9">
+            <div class="col-lg-6 login-container">
                 <div class="card o-hidden border-0 shadow-lg my-5">
-                    <div class="card-body p-0">
-                        <div class="row justify-content-center">
-                            <div class="col-lg-8">
-                                <div class="p-5">
-                                    <div class="text-center">
-                                        <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
-                                    </div>
-                                    <form class="user">
-                                        <div class="form-group">
-                                            <label for="exampleInputEmail">Email Address</label>
-                                            <input type="email" class="form-control form-control-user" id="exampleInputEmail" placeholder="Enter Email Address...">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="exampleInputPassword">Password</label>
-                                            <input type="password" class="form-control form-control-user" id="exampleInputPassword" placeholder="Password">
-                                        </div>
-                                        <div class="form-group d-flex justify-content-between align-items-center">
-                                            <div class="custom-control custom-checkbox small">
-                                                <input type="checkbox" class="custom-control-input" id="customCheck">
-                                                <label class="custom-control-label" for="customCheck">Remember Me</label>
-                                            </div>
-                                        </div>
-                                        <button type="submit" class="btn btn-primary btn-user btn-block">Login</button>
-                                    </form>
+                    <div class="card-body p-4">
+                        <div class="text-center">
+                            <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
+                        </div>
+                        <form class="user">
+                            <div class="form-group">
+                                <label for="exampleInputEmail">Email Address</label>
+                                <input type="email" class="form-control form-control-user" id="exampleInputEmail" placeholder="Enter Email Address...">
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputPassword">Password</label>
+                                <input type="password" class="form-control form-control-user" id="exampleInputPassword" placeholder="Password">
+                            </div>
+                            <div class="form-group d-flex justify-content-between align-items-center">
+                                <div class="custom-control custom-checkbox small">
+                                    <input type="checkbox" class="custom-control-input" id="customCheck">
+                                    <label class="custom-control-label" for="customCheck">Remember Me</label>
                                 </div>
                             </div>
-                        </div>
+                            <button type="submit" class="btn btn-primary btn-user btn-block">Login</button>
+                        </form
                     </div>
                 </div>
             </div>
