@@ -1,7 +1,18 @@
 <!-- Sidebar -->
 <ul class="navbar-nav sidebar sidebar-dark accordion" id="accordionSidebar" style="background-color: #000; color: #fff;">
 
-    <!-- Sidebar - Home -->
+    <!-- Sidebar - Brand -->
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+        <div class="sidebar-brand-icon rotate-n-15">
+            <i class="fas fa-home"></i>
+        </div>
+        <div class="sidebar-brand-text mx-3">Clinic System</div>
+    </a>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider">
+
+    <!-- Nav Item - Home -->
     <li class="nav-item">
         <a class="nav-link" href="index.html">
             <i class="fas fa-home"></i>
@@ -12,7 +23,7 @@
     <!-- Divider -->
     <hr class="sidebar-divider">
 
-    <!-- Student Section -->
+    <!-- Nav Item - Student -->
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#studentMenu"
             aria-expanded="true" aria-controls="studentMenu">
@@ -26,7 +37,7 @@
         </div>
     </li>
 
-    <!-- Admit Section -->
+    <!-- Nav Item - Admit -->
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#admitMenu"
             aria-expanded="true" aria-controls="admitMenu">
@@ -40,7 +51,7 @@
         </div>
     </li>
 
-    <!-- Medical Section -->
+    <!-- Nav Item - Medical -->
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#medicalMenu"
             aria-expanded="true" aria-controls="medicalMenu">
@@ -55,7 +66,7 @@
         </div>
     </li>
 
-    <!-- Inventory Section -->
+    <!-- Nav Item - Inventory -->
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#inventoryMenu"
             aria-expanded="true" aria-controls="inventoryMenu">
@@ -69,7 +80,7 @@
         </div>
     </li>
 
-    <!-- Report and Reminder Section -->
+    <!-- Nav Item - Report and Reminder -->
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#reportMenu"
             aria-expanded="true" aria-controls="reportMenu">
