@@ -14,7 +14,7 @@
 
     <!-- Nav Item - Home -->
     <li class="nav-item">
-        <a class="nav-link" href="../dashboard/index.php">
+        <a class="nav-link" href="../common/dashboard.php">
             <i class="fas fa-home"></i>
             <span>Home</span>
         </a>
