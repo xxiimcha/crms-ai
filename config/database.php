@@ -1,8 +1,8 @@
 <?php
 define('DB_HOST', 'localhost');
-define('DB_USER', 'root'); // Change this if needed
-define('DB_PASS', ''); // Change this if needed
-define('DB_NAME', 'studentdata');
+define('DB_USER', 'root');
+define('DB_PASS', '');
+define('DB_NAME', 'crms');
 
 $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 

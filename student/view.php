@@ -10,7 +10,26 @@
             <div class="container-fluid">
                 <h1 class="h3 mb-4 text-gray-800">Student List</h1>
 
+                <!-- Selection Modal -->
                 <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Select Student Category</h6>
+                    </div>
+                    <div class="card-body text-center">
+                        <p>Please select the category of students you want to view:</p>
+                        <div class="form-group">
+                            <label class="mr-3">
+                                <input type="radio" name="student_category" value="shs" class="student-category"> Senior High School (SHS)
+                            </label>
+                            <label>
+                                <input type="radio" name="student_category" value="college" class="student-category"> College
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Student Table (Hidden Initially) -->
+                <div class="card shadow mb-4 d-none" id="studentTableContainer">
                     <div class="card-header py-3 d-flex justify-content-between align-items-center">
                         <h6 class="m-0 font-weight-bold text-primary">Student Records</h6>
                         <a href="form.php" class="btn btn-primary btn-sm">
@@ -61,10 +80,12 @@
 
 <script>
     $(document).ready(function () {
-        function loadStudentData() {
+        // Function to load student data based on category (SHS or College)
+        function loadStudentData(category) {
             $.ajax({
                 url: '../controllers/StudentController.php?action=fetch_students',
                 type: 'GET',
+                data: { category: category }, // Sending category parameter
                 dataType: 'json',
                 success: function (response) {
                     if (response.success) {
@@ -86,16 +107,23 @@
 
                         $("#studentTable tbody").html(rows);
                         $("#studentTable").DataTable();
+                        $("#studentTableContainer").removeClass("d-none"); // Show the table
                     } else {
                         $("#studentTable tbody").html("<tr><td colspan='6' class='text-center text-danger'>No records found.</td></tr>");
+                        $("#studentTableContainer").removeClass("d-none"); // Show the table
                     }
                 },
                 error: function () {
                     $("#studentTable tbody").html("<tr><td colspan='6' class='text-center text-danger'>Error fetching data.</td></tr>");
+                    $("#studentTableContainer").removeClass("d-none"); // Show the table
                 }
             });
         }
 
-        loadStudentData();
+        // Handle category selection
+        $(".student-category").change(function () {
+            var category = $(this).val();
+            loadStudentData(category);
+        });
     });
 </script>

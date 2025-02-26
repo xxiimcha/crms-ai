@@ -9,25 +9,73 @@
             <?php include('../partials/nav.php'); ?>
 
             <div class="container-fluid">
-                <h1 class="h3 mb-4 text-gray-800">Add Student</h1>
+                <h1 class="h3 mb-4 text-gray-800 text-center">Student Registration</h1>
 
                 <div class="card shadow mb-4">
-                    <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Student Registration</h6>
+                    <div class="card-header py-3 bg-dark text-white">
+                        <h6 class="m-0 font-weight-bold">Fill in the required details</h6>
                     </div>
                     <div class="card-body">
                         <form id="studentForm">
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label>First Name</label>
                                         <input type="text" name="firstname" class="form-control" required>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label>Last Name</label>
                                         <input type="text" name="lastname" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Middle Name</label>
+                                        <input type="text" name="middlename" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Student Number</label>
+                                        <input type="text" name="student_number" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Birthdate</label>
+                                        <input type="date" name="birthdate" id="birthdate" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Age</label>
+                                        <input type="text" name="age" id="age" class="form-control" readonly>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Address</label>
+                                        <input type="text" name="address" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Contact Number</label>
+                                        <input type="text" name="contact_number" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Parent's Contact Number</label>
+                                        <input type="text" name="parent_contact" class="form-control" required>
                                     </div>
                                 </div>
                             </div>
@@ -68,27 +116,14 @@
                                 </div>
                             </div>
 
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Email</label>
-                                        <input type="email" name="email" class="form-control" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Contact Number</label>
-                                        <input type="text" name="contact_number" class="form-control" required>
-                                    </div>
-                                </div>
+                            <div class="text-center mt-4">
+                                <button type="submit" class="btn btn-dark">
+                                    <i class="fas fa-save"></i> Save Student
+                                </button>
+                                <a href="view.php" class="btn btn-outline-dark">
+                                    <i class="fas fa-arrow-left"></i> Back to List
+                                </a>
                             </div>
-
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Save Student
-                            </button>
-                            <a href="view.php" class="btn btn-secondary">
-                                <i class="fas fa-arrow-left"></i> Back to List
-                            </a>
                         </form>
                     </div>
                 </div>
@@ -96,10 +131,10 @@
             </div>
         </div>
 
-        <footer class="sticky-footer bg-white">
+        <footer class="sticky-footer bg-dark text-white">
             <div class="container my-auto">
                 <div class="copyright text-center my-auto">
-                    <span>Copyright &copy; Your Website 2025</span>
+                    <span>&copy; Your Website 2025</span>
                 </div>
             </div>
         </footer>
@@ -137,6 +172,21 @@
             } else {
                 $("#course").html('<option value="">Select Course/Strand</option>');
             }
+        });
+
+        // Calculate age from birthdate
+        $("#birthdate").change(function () {
+            var birthdate = new Date($(this).val());
+            var today = new Date();
+            var age = today.getFullYear() - birthdate.getFullYear();
+            var monthDiff = today.getMonth() - birthdate.getMonth();
+
+            // Adjust age if birthday hasn't occurred yet this year
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthdate.getDate())) {
+                age--;
+            }
+
+            $("#age").val(age);
         });
 
         // Submit student form

@@ -2,7 +2,7 @@
 <ul class="navbar-nav sidebar sidebar-dark accordion" id="accordionSidebar" style="background-color: #000; color: #fff;">
 
     <!-- Sidebar - Brand -->
-    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="../dashboard/index.php">
         <div class="sidebar-brand-icon rotate-n-15">
             <i class="fas fa-home"></i>
         </div>
@@ -14,7 +14,7 @@
 
     <!-- Nav Item - Home -->
     <li class="nav-item">
-        <a class="nav-link" href="index.html">
+        <a class="nav-link" href="../dashboard/index.php">
             <i class="fas fa-home"></i>
             <span>Home</span>
         </a>
@@ -27,26 +27,28 @@
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#studentMenu"
             aria-expanded="true" aria-controls="studentMenu">
-            <i class="fas fa-user"></i>
+            <i class="fas fa-user-graduate"></i>
             <span>Student</span>
         </a>
         <div id="studentMenu" class="collapse" aria-labelledby="studentHeading" data-parent="#accordionSidebar">
             <div class="bg-dark py-2 collapse-inner rounded">
-                <a class="collapse-item text-white" href="student-data.html">Student Data</a>
+                <a class="collapse-item text-white" href="../student/view.php">Student List</a>
+                <a class="collapse-item text-white" href="../student/form.php">Add Student</a>
             </div>
         </div>
     </li>
 
-    <!-- Nav Item - Admit -->
+    <!-- Nav Item - Admission -->
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#admitMenu"
             aria-expanded="true" aria-controls="admitMenu">
             <i class="fas fa-hospital-user"></i>
-            <span>Admit</span>
+            <span>Admission</span>
         </a>
         <div id="admitMenu" class="collapse" aria-labelledby="admitHeading" data-parent="#accordionSidebar">
             <div class="bg-dark py-2 collapse-inner rounded">
-                <a class="collapse-item text-white" href="admit-data.html">Admit Data</a>
+                <a class="collapse-item text-white" href="../admission/view.php">Admission Records</a>
+                <a class="collapse-item text-white" href="../admission/form.php">New Admission</a>
             </div>
         </div>
     </li>
@@ -60,8 +62,9 @@
         </a>
         <div id="medicalMenu" class="collapse" aria-labelledby="medicalHeading" data-parent="#accordionSidebar">
             <div class="bg-dark py-2 collapse-inner rounded">
-                <a class="collapse-item text-white" href="medical.html">Medical</a>
-                <a class="collapse-item text-white" href="disease-list.html">Disease List</a>
+                <a class="collapse-item text-white" href="../medical/view.php">Medical Records</a>
+                <a class="collapse-item text-white" href="../medical/disease-list.php">Disease List</a>
+                <a class="collapse-item text-white" href="../medical/schedule.php">Medical Schedule</a>
             </div>
         </div>
     </li>
@@ -75,21 +78,23 @@
         </a>
         <div id="inventoryMenu" class="collapse" aria-labelledby="inventoryHeading" data-parent="#accordionSidebar">
             <div class="bg-dark py-2 collapse-inner rounded">
-                <a class="collapse-item text-white" href="medication.html">Medication</a>
+                <a class="collapse-item text-white" href="../inventory/medication.php">Medication Inventory</a>
+                <a class="collapse-item text-white" href="../inventory/supplies.php">Medical Supplies</a>
             </div>
         </div>
     </li>
 
-    <!-- Nav Item - Report and Reminder -->
+    <!-- Nav Item - Reports & Reminders -->
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#reportMenu"
             aria-expanded="true" aria-controls="reportMenu">
-            <i class="fas fa-bell"></i>
-            <span>Report and Reminder</span>
+            <i class="fas fa-chart-line"></i>
+            <span>Reports & Reminders</span>
         </a>
         <div id="reportMenu" class="collapse" aria-labelledby="reportHeading" data-parent="#accordionSidebar">
             <div class="bg-dark py-2 collapse-inner rounded">
-                <a class="collapse-item text-white" href="report.html">Report</a>
+                <a class="collapse-item text-white" href="../reports/view.php">Reports</a>
+                <a class="collapse-item text-white" href="../reports/reminders.php">Reminders</a>
             </div>
         </div>
     </li>
@@ -97,7 +102,7 @@
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">
 
-    <!-- Sidebar Toggler (Sidebar) -->
+    <!-- Sidebar Toggler -->
     <div class="text-center d-none d-md-inline">
         <button class="rounded-circle border-0" id="sidebarToggle"></button>
     </div>
