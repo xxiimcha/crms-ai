@@ -28,17 +28,31 @@
             max-width: 450px;
             margin: auto;
         }
-        .loading-spinner {
-            display: none;
-            text-align: center;
-            margin-top: 15px;
-        }
         .alert {
             display: none;
+        }
+        /* Spinner overlay */
+        .spinner-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
         }
     </style>
 </head>
 <body class="bg-gradient-dark">
+    <div class="spinner-overlay">
+        <div class="spinner-border text-light" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-6 login-container">
@@ -58,11 +72,6 @@
                                 <input type="password" class="form-control form-control-user" id="password" name="password" placeholder="Password" required>
                             </div>
                             <button type="submit" class="btn btn-primary btn-user btn-block">Login</button>
-                            <div class="loading-spinner">
-                                <div class="spinner-border text-primary" role="status">
-                                    <span class="sr-only">Loading...</span>
-                                </div>
-                            </div>
                         </form>
                     </div>
                 </div>
@@ -71,44 +80,52 @@
     </div>
 
     <script>
-        document.getElementById("loginForm").addEventListener("submit", function(event) {
+        document.getElementById("loginForm").addEventListener("submit", async function(event) {
             event.preventDefault();
 
             let email = document.getElementById("email").value;
             let password = document.getElementById("password").value;
             let alertMessage = document.getElementById("alertMessage");
+            let loginButton = document.querySelector(".btn-user");
+            let spinnerOverlay = document.querySelector(".spinner-overlay");
 
             // Show loading spinner
-            document.querySelector(".loading-spinner").style.display = "block";
+            spinnerOverlay.style.display = "flex";
+            loginButton.disabled = true;
 
-            // Disable login button
-            document.querySelector(".btn-user").disabled = true;
+            try {
+                let response = await fetch("controllers/LoginController.php", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                    body: new URLSearchParams({
+                        email: email,
+                        password: password
+                    })
+                });
 
-            // AJAX request
-            let xhr = new XMLHttpRequest();
-            xhr.open("POST", "controllers/LoginController.php", true);
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                let result = await response.json();
+                
+                // Hide spinner after response is received
+                spinnerOverlay.style.display = "none";
+                loginButton.disabled = false;
 
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4) {
-                    document.querySelector(".loading-spinner").style.display = "none";
-                    document.querySelector(".btn-user").disabled = false;
-
-                    let response = JSON.parse(xhr.responseText);
-
-                    if (response.status === "success") {
-                        window.location.href = response.redirect;
-                    } else {
-                        alertMessage.style.display = "block";
-                        alertMessage.innerHTML = response.message;
-                    }
+                if (result.status === "success") {
+                    window.location.href = result.redirect;
+                } else {
+                    alertMessage.style.display = "block";
+                    alertMessage.innerHTML = result.message;
                 }
-            };
-
-            xhr.send("email=" + encodeURIComponent(email) + "&password=" + encodeURIComponent(password));
+            } catch (error) {
+                spinnerOverlay.style.display = "none";
+                loginButton.disabled = false;
+                alertMessage.style.display = "block";
+                alertMessage.innerHTML = "An error occurred. Please try again.";
+            }
         });
     </script>
 
-<?php include('partials/foot.php');?>
+<?php include('partials/foot.php'); ?>
 </body>
 </html>

@@ -5,6 +5,7 @@ include('../config/database.php'); // Database connection
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = trim($_POST['email']);
     $password = trim($_POST['password']);
+    $hashed_password = md5($password); // Hash input password
 
     if (empty($email) || empty($password)) {
         echo json_encode(["status" => "error", "message" => "All fields are required."]);
@@ -23,11 +24,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit;
         }
 
-        if (password_verify($password, $user['password'])) {
+        if ($hashed_password === $user['password']) { // Compare MD5 hashes
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['name'];
             $_SESSION['role'] = $user['role'];
-            echo json_encode(["status" => "success", "message" => "Login successful.", "redirect" => "dashboard.php"]);
+            echo json_encode(["status" => "success", "message" => "Login successful.", "redirect" => "common/dashboard.php"]);
         } else {
             echo json_encode(["status" => "error", "message" => "Invalid credentials."]);
         }

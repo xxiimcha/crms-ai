@@ -81,7 +81,7 @@ switch ($action) {
         break;
 
     case 'medications':
-        $totalMedicine = getTotalCount($conn, "medicine");
+        $totalMedicine = getTotalCount($conn, "medicines");
         $response["success"] = true;
         $response["html"] = generateCard("Medications Dispensed", $totalMedicine, "fa-pills", "danger");
         break;
@@ -98,7 +98,7 @@ switch ($action) {
         $totalStudents = getTotalCount($conn, "students");
         $totalAdmit = getTotalCount($conn, "admit");
         $totalMedical = getTotalCount($conn, "admit", "DISTINCT disease");
-        $totalMedicine = getTotalCount($conn, "medicine");
+        $totalMedicine = getTotalCount($conn, "medicines");
 
         $html = generateCard("Total Students", $totalStudents, "fa-user-graduate", "primary");
         $html .= generateCard("Admissions", $totalAdmit, "fa-hospital-user", "success");
