@@ -148,11 +148,17 @@ function saveAdmission() {
 function saveLabTest($admission_id) {
     global $conn;
 
-    // Lab test fields
-    $cbc = isset($_POST['lab_procedures']) && in_array('CBC', $_POST['lab_procedures']) ? 1 : 0;
-    $xray = isset($_POST['lab_procedures']) && in_array('X-ray', $_POST['lab_procedures']) ? 1 : 0;
-    $urine = isset($_POST['lab_procedures']) && in_array('Urinalysis', $_POST['lab_procedures']) ? 1 : 0;
+    // Debugging: Check received form data
+    error_log("Received lab procedures: " . print_r($_POST['lab_procedures'], true));
+
+    // Ensure procedures array is received
+    $cbc = isset($_POST['lab_procedures']) && is_array($_POST['lab_procedures']) && in_array('CBC', $_POST['lab_procedures']) ? 1 : 0;
+    $xray = isset($_POST['lab_procedures']) && is_array($_POST['lab_procedures']) && in_array('X-ray', $_POST['lab_procedures']) ? 1 : 0;
+    $urine = isset($_POST['lab_procedures']) && is_array($_POST['lab_procedures']) && in_array('Urinalysis', $_POST['lab_procedures']) ? 1 : 0;
     $schedule_time = mysqli_real_escape_string($conn, $_POST['schedule_time'] ?? date('Y-m-d H:i:s'));
+
+    // Debugging: Log extracted values
+    error_log("Lab Procedures - CBC: $cbc, X-ray: $xray, Urinalysis: $urine, Schedule: $schedule_time");
 
     // Insert lab test details
     $labTestQuery = "INSERT INTO lab_tests (admission_id, cbc, cbc_result, xray, xray_result, urine, urine_result, schedule_time) 
@@ -162,4 +168,5 @@ function saveLabTest($admission_id) {
         error_log("Error saving lab test: " . mysqli_error($conn));
     }
 }
+
 ?>

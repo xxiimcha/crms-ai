@@ -176,6 +176,13 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <div id="lab_date_container" class="d-none">
+                                            <div class="form-group">
+                                                <label for="schedule_time">Lab Test Schedule</label>
+                                                <input type="datetime-local" name="schedule_time" id="schedule_time" class="form-control">
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -205,9 +212,12 @@
         $("#admissionForm").submit(function (event) {
             event.preventDefault();
             var formData = new FormData(this);
+            
+            // Ensure the checkbox value is always sent
+            formData.append("lab_schedule_checkbox", $("#lab_schedule_checkbox").is(":checked") ? "on" : "off");
 
             $.ajax({
-                url: '../controllers/AdmissionController.php?action=save_admission', // Add action in the URL
+                url: '../controllers/AdmissionController.php?action=save_admission',
                 type: 'POST',
                 data: formData,
                 contentType: false,
@@ -216,7 +226,7 @@
                 success: function (response) {
                     if (response.success) {
                         alert("Admission successfully saved!");
-                        window.location.href = "view.php";  // Redirect after successful submission
+                        window.location.href = "view.php";
                     } else {
                         alert("Error: " + response.message);
                     }
@@ -229,6 +239,7 @@
 
         $("#lab_schedule_checkbox").change(function () {
             $("#lab_procedures_container").toggleClass("d-none", !$(this).is(":checked"));
+            $("#lab_date_container").toggleClass("d-none", !$(this).is(":checked"));
         });
 
         $("#student_number").on("input", function () {
