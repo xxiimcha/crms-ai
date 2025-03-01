@@ -24,12 +24,12 @@
                     <!-- SHS Student Table -->
                     <div class="tab-pane fade show active" id="shs" role="tabpanel">
                         <div class="card shadow mb-4">
-                            <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                            <div class="card-header bg-info text-white">
                                 <h6 class="m-0 font-weight-bold">Senior High School Records</h6>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
-                                    <table class="table table-bordered table-hover" id="shsTable" width="100%" cellspacing="0">
+                                    <table class="table table-bordered table-hover" id="shsTable">
                                         <thead class="thead-dark">
                                             <tr>
                                                 <th>ID</th>
@@ -51,12 +51,12 @@
                     <!-- College Student Table -->
                     <div class="tab-pane fade" id="college" role="tabpanel">
                         <div class="card shadow mb-4">
-                            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                            <div class="card-header bg-primary text-white">
                                 <h6 class="m-0 font-weight-bold">College Records</h6>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
-                                    <table class="table table-bordered table-hover" id="collegeTable" width="100%" cellspacing="0">
+                                    <table class="table table-bordered table-hover" id="collegeTable">
                                         <thead class="thead-dark">
                                             <tr>
                                                 <th>ID</th>
@@ -74,8 +74,8 @@
                             </div>
                         </div>
                     </div>
-                </div>
 
+                </div>
             </div>
         </div>
 
@@ -104,7 +104,7 @@
 
         function loadStudentData() {
             $.ajax({
-                url: 'https://enrollment.bcp-sms1.com/fetch_students/fetch_students_info_nova.php', // Updated URL
+                url: 'https://enrollment.bcp-sms1.com/fetch_students/fetch_students_info_nova.php', 
                 type: 'GET',
                 dataType: 'json',
                 success: function (response) {
@@ -112,22 +112,28 @@
                         var shsRows = "", collegeRows = "";
                         $.each(response, function (index, student) {
                             var statusBadge = '<span class="badge badge-success">Active</span>';
+                            var studentId = student.studentId;
+                            
+                            // Create View and Add Medical Record Buttons
+                            var actions = `
+                                <a href='../medical/medical_records.php?id=${studentId}' class='btn btn-sm btn-warning'>
+                                    <i class='fas fa-file-medical'></i> View Medical
+                                </a>
+                                <a href='medical_records.php?id=${studentId}' class='btn btn-sm btn-success'>
+                                    <i class='fas fa-plus'></i> Add Medical
+                                </a>
+                            `;
 
                             var studentRow = "<tr>" +
-                                "<td>" + student.studentId + "</td>" +
+                                "<td>" + studentId + "</td>" +
                                 "<td>" + student.name + "</td>" +
                                 "<td>" + student.level + "</td>" +
                                 "<td>" + student.course + "</td>" +
                                 "<td>" + student.email + "</td>" +
                                 "<td>" + statusBadge + "</td>" +
-                                "<td>" +
-                                    "<a href='medical_records.php?id=" + student.studentId + "' class='btn btn-sm btn-warning'>" +
-                                        "<i class='fas fa-file-medical'></i> Medical Records" +
-                                    "</a>" +
-                                "</td>" +
+                                "<td>" + actions + "</td>" +
                                 "</tr>";
 
-                            // Check if student is SHS or College
                             if (["Grade 11", "Grade 12"].includes(student.level)) {
                                 shsRows += studentRow;
                             } else {
@@ -135,32 +141,21 @@
                             }
                         });
 
-                        if ($.fn.DataTable.isDataTable("#shsTable")) {
-                            shsTable.destroy();
-                        }
-                        if ($.fn.DataTable.isDataTable("#collegeTable")) {
-                            collegeTable.destroy();
-                        }
+                        if ($.fn.DataTable.isDataTable("#shsTable")) shsTable.destroy();
+                        if ($.fn.DataTable.isDataTable("#collegeTable")) collegeTable.destroy();
 
                         $("#shsTable tbody").html(shsRows);
                         $("#collegeTable tbody").html(collegeRows);
 
                         shsTable = $("#shsTable").DataTable();
                         collegeTable = $("#collegeTable").DataTable();
-                    } else {
-                        $("#shsTable tbody, #collegeTable tbody").html("<tr><td colspan='7' class='text-center text-danger'>No records found.</td></tr>");
                     }
-                },
-                error: function () {
-                    $("#shsTable tbody, #collegeTable tbody").html("<tr><td colspan='7' class='text-center text-danger'>Error fetching data.</td></tr>");
                 }
             });
         }
 
-        // Load student data on page load
         loadStudentData();
 
-        // Handle tab switch
         $('#studentTabs a').on('click', function (e) {
             e.preventDefault();
             $(this).tab('show');

@@ -33,7 +33,7 @@
         <div id="studentMenu" class="collapse" aria-labelledby="studentHeading" data-parent="#accordionSidebar">
             <div class="bg-dark py-2 collapse-inner rounded">
                 <a class="collapse-item text-white" href="../student/view.php">Student List</a>
-                <a class="collapse-item text-white" href="../student/form.php">Add Student</a>
+                <!-- <a class="collapse-item text-white" href="../student/form.php">Add Student</a> -->
             </div>
         </div>
     </li>
