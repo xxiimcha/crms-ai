@@ -117,7 +117,7 @@
                             var statusBadge = '<span class="badge badge-success">Active</span>';
                             var studentId = student.studentId;
                             var studentName = student.name;
-                            var qrData = "http://localhost/crms-ai/medical/medical_records.php?id=" + studentId;
+                            var qrData = "https://clinic.bcp-sms1.com/medical/medical_records.php?id=" + studentId;
 
                             // Create View, Add Medical Record, and QR Code Buttons
                             var actions = `
