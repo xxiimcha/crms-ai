@@ -85,53 +85,6 @@
 <?php include('../partials/modal.php'); ?>
 <?php include('../partials/foot.php'); ?>
 
-<!-- Modal for Adding Schedule -->
-<div class="modal fade" id="scheduleModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Add Medical Schedule</h5>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="scheduleForm">
-                    <div class="form-group">
-                        <label>Type</label>
-                        <select name="type" id="type" class="form-control" required>
-                            <option value="Student">Student</option>
-                            <option value="Professor">Professor</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-                    <div class="form-group" id="studentField">
-                        <label>Student Number</label>
-                        <input type="text" name="student_number" id="student_number" class="form-control">
-                    </div>
-                    <div id="manualFields" class="d-none">
-                        <div class="form-group">
-                            <label>Full Name</label>
-                            <input type="text" name="fullname" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label>Email</label>
-                            <input type="email" name="email" class="form-control">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Appointment Date</label>
-                        <input type="date" name="appointment_date" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Reason</label>
-                        <textarea name="reason" class="form-control" required></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Save Schedule</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
 <!-- DataTables & jQuery -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -169,35 +122,5 @@
         // Load data for Upcoming and Completed schedules
         loadSchedules("Upcoming", "#upcomingTable");
         loadSchedules("Completed", "#completedTable");
-
-        // Toggle manual input fields based on type
-        $("#type").change(function () {
-            if ($(this).val() === "Student") {
-                $("#studentField").removeClass("d-none");
-                $("#manualFields").addClass("d-none");
-            } else {
-                $("#studentField").addClass("d-none");
-                $("#manualFields").removeClass("d-none");
-            }
-        });
-
-        // Submit schedule form
-        $("#scheduleForm").submit(function (event) {
-            event.preventDefault();
-            $.ajax({
-                url: '../controllers/MedicalController.php?action=add_schedule',
-                type: 'POST',
-                data: $(this).serialize(),
-                dataType: 'json',
-                success: function (response) {
-                    if (response.success) {
-                        alert("Schedule added successfully!");
-                        window.location.reload();
-                    } else {
-                        alert("Error: " + response.message);
-                    }
-                }
-            });
-        });
     });
 </script>

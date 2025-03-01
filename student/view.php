@@ -124,7 +124,7 @@
                                 <a href='../medical/medical_records.php?id=${studentId}' class='btn btn-sm btn-warning'>
                                     <i class='fas fa-file-medical'></i> View Medical
                                 </a>
-                                <a href='../medical/add_medical_record.php?id=${studentId}' class='btn btn-sm btn-success'>
+                                <a href='medical_records.php?id=${studentId}' class='btn btn-sm btn-success'>
                                     <i class='fas fa-plus'></i> Add Medical
                                 </a>
                                 <button class='btn btn-sm btn-secondary' onclick="generateQrCode('${qrData}', '${studentName}')">
