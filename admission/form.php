@@ -125,7 +125,7 @@
                                             </div>
                                             <div class="mt-3">
                                                 <label>Actual Diagnosis</label>
-                                                <input type="text" id="correct_diagnosis" class="form-control" placeholder="Enter or edit the correct diagnosis...">
+                                                <input type="text" id="correct_diagnosis" name="correct_diagnosis" class="form-control" placeholder="Enter or edit the correct diagnosis...">
                                             </div>
                                         </div>
                                     </div>
@@ -201,6 +201,61 @@
 <?php include('../partials/foot.php'); ?>
 
 <script>
+    $(document).ready(function () {
+        $("#admissionForm").submit(function (event) {
+            event.preventDefault();
+            var formData = new FormData(this);
+
+            $.ajax({
+                url: '../controllers/AdmissionController.php?action=save_admission', // Add action in the URL
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                dataType: 'json',
+                success: function (response) {
+                    if (response.success) {
+                        alert("Admission successfully saved!");
+                        window.location.href = "view.php";  // Redirect after successful submission
+                    } else {
+                        alert("Error: " + response.message);
+                    }
+                },
+                error: function () {
+                    alert("Failed to save admission.");
+                }
+            });
+        });
+
+        $("#lab_schedule_checkbox").change(function () {
+            $("#lab_procedures_container").toggleClass("d-none", !$(this).is(":checked"));
+        });
+
+        $("#student_number").on("input", function () {
+            var studentNumber = $(this).val().trim();
+            if (studentNumber.length > 0) {
+                $.ajax({
+                    url: '../controllers/AdmissionController.php?action=get_student_details',
+                    type: 'GET',
+                    data: { student_number: studentNumber },
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.success) {
+                            $("#student_firstname").val(response.student.firstname);
+                            $("#student_lastname").val(response.student.lastname);
+                            $("#student_email").val(response.student.email);
+                            $("#student_year_level").val(response.student.year_level);
+                            $("#student_course").val(response.student.course);
+                            $("#studentInfo").removeClass("d-none");
+                        } else {
+                            $("#studentInfo").addClass("d-none");
+                        }
+                    }
+                });
+            }
+        });
+    });
+
     $(document).ready(function () {
         $("#admission_type").change(function () {
             var type = $(this).val();
