@@ -1,6 +1,5 @@
 <?php include('../partials/head.php'); ?>
 <?php include('../config/database.php'); ?>
-
 <div id="wrapper">
     <?php include('../partials/sidebar.php'); ?>
 
@@ -17,158 +16,193 @@
                     </div>
                     <div class="card-body">
                         <form id="admissionForm">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Admission Type</label>
-                                        <select name="admission_type" id="admission_type" class="form-control" required>
-                                            <option value="">Select Type</option>
-                                            <option value="Student">Student</option>
-                                            <option value="Professor">Professor</option>
-                                            <option value="Other">Other</option>
-                                        </select>
+                            
+                            <!-- General Information Section -->
+                            <div class="card mb-4">
+                                <div class="card-header bg-info text-white">General Information</div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Admission Type</label>
+                                                <select name="admission_type" id="admission_type" class="form-control" required>
+                                                    <option value="">Select Type</option>
+                                                    <option value="Student">Student</option>
+                                                    <option value="Professor">Professor</option>
+                                                    <option value="Other">Other</option>
+                                                </select>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
 
-                            <!-- Student Admission Fields -->
-                            <div id="studentFields" class="d-none">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>Student Number</label>
-                                            <input type="text" name="student_number" id="student_number" class="form-control" placeholder="Enter Student Number">
+                                    <!-- Student Information -->
+                                    <div id="studentFields" class="d-none">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Student Number</label>
+                                                    <input type="text" name="student_number" id="student_number" class="form-control" placeholder="Enter Student Number">
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <div id="studentInfo" class="row d-none">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>First Name</label>
-                                            <input type="text" id="student_firstname" class="form-control" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>Last Name</label>
-                                            <input type="text" id="student_lastname" class="form-control" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>Email</label>
-                                            <input type="email" id="student_email" class="form-control" readonly>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="studentAcademicInfo" class="row d-none">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>Year Level</label>
-                                            <input type="text" id="student_year_level" class="form-control" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>Course</label>
-                                            <input type="text" id="student_course" class="form-control" readonly>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <!-- Manual Input Fields for Non-Students -->
-                            <div id="manualFields" class="d-none">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>First Name</label>
-                                            <input type="text" name="firstname" class="form-control">
+                                        <div id="studentInfo" class="row d-none">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>First Name</label>
+                                                    <input type="text" id="student_firstname" class="form-control" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Last Name</label>
+                                                    <input type="text" id="student_lastname" class="form-control" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Email</label>
+                                                    <input type="email" id="student_email" class="form-control" readonly>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>Last Name</label>
-                                            <input type="text" name="lastname" class="form-control">
+
+                                    <!-- Manual Input for Non-Students -->
+                                    <div id="manualFields" class="d-none">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>First Name</label>
+                                                    <input type="text" name="firstname" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Last Name</label>
+                                                    <input type="text" name="lastname" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Email</label>
+                                                    <input type="email" name="email" class="form-control">
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>Email</label>
-                                            <input type="email" name="email" class="form-control">
-                                        </div>
-                                    </div>
+
                                 </div>
                             </div>
 
                             <!-- Medical Information Section -->
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <h5 class="text-primary">Medical Information</h5>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Symptoms</label>
-                                        <textarea name="symptoms" class="form-control" placeholder="Describe symptoms..." required></textarea>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Medical History</label>
-                                        <textarea name="medical_history" class="form-control" placeholder="Mention any medical history..." required></textarea>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Current Medications</label>
-                                        <textarea name="current_medications" class="form-control" placeholder="List current medications..." required></textarea>
-                                    </div>
-                                </div>
+                            <div class="card mb-4">
+                                <div class="card-header bg-danger text-white">Medical Information</div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Symptoms</label>
+                                                <input name="symptoms" id="symptoms" class="form-control" placeholder="Enter symptoms..." required>
+                                            </div>
+                                        </div>
 
-                                <!-- Laboratory Schedule Checkbox -->
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <div class="form-check">
-                                            <input type="checkbox" class="form-check-input" id="lab_schedule_checkbox">
-                                            <label class="form-check-label" for="lab_schedule_checkbox">Schedule Laboratory Test</label>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Medical History</label>
+                                                <textarea name="medical_history" class="form-control" placeholder="Mention any medical history..." required></textarea>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
 
-                                <!-- Medical Procedures Selection -->
-                                <div class="col-md-6 d-none" id="lab_procedures_container">
-                                    <div class="form-group">
-                                        <label>Select Medical Procedures</label>
-                                        <div class="form-check">
-                                            <input type="checkbox" name="lab_procedures[]" value="CBC" class="form-check-input">
-                                            <label class="form-check-label">CBC</label>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Current Medications</label>
+                                                <textarea name="current_medications" class="form-control" placeholder="List current medications..." required></textarea>
+                                            </div>
                                         </div>
-                                        <div class="form-check">
-                                            <input type="checkbox" name="lab_procedures[]" value="X-ray" class="form-check-input">
-                                            <label class="form-check-label">X-ray</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input type="checkbox" name="lab_procedures[]" value="Urinalysis" class="form-check-input">
-                                            <label class="form-check-label">Urinalysis</label>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Laboratory Date Picker -->
-                                <div class="col-md-6 d-none" id="lab_date_container">
-                                    <div class="form-group">
-                                        <label>Laboratory Date</label>
-                                        <input type="date" name="lab_date" id="lab_date" class="form-control">
                                     </div>
                                 </div>
                             </div>
 
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Submit Admission
-                            </button>
-                            <a href="view.php" class="btn btn-secondary">
-                                <i class="fas fa-arrow-left"></i> Back to List
-                            </a>
+                            <!-- AI Diagnosis & Medicine Recommendation -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card mb-4">
+                                        <div class="card-header bg-primary text-white">AI Diagnosis</div>
+                                        <div class="card-body">
+                                            <div class="mt-3">
+                                                <label>Possible Diagnosis</label>
+                                                <div id="ai_diagnosis_list" class="p-2 border rounded bg-light" style="min-height: 40px;">
+                                                    <small class="text-muted">Diagnosis will appear here...</small>
+                                                </div>
+                                            </div>
+                                            <div class="mt-3">
+                                                <label>Actual Diagnosis</label>
+                                                <input type="text" id="correct_diagnosis" class="form-control" placeholder="Enter or edit the correct diagnosis...">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Medicine Recommendation -->
+                                <div class="col-md-6">
+                                    <div class="card mb-4">
+                                        <div class="card-header bg-success text-white">Medicine Recommendation</div>
+                                        <div class="card-body">
+                                            <div class="form-group">
+                                                <label>Recommended Medicines</label>
+                                                <ul id="medicine_list" class="list-group"></ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Laboratory & Procedures -->
+                            <div class="card mb-4">
+                                <div class="card-header bg-warning text-dark">Laboratory & Procedures</div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <div class="form-check">
+                                                    <input type="checkbox" class="form-check-input" id="lab_schedule_checkbox">
+                                                    <label class="form-check-label" for="lab_schedule_checkbox">Schedule Laboratory Test</label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 d-none" id="lab_procedures_container">
+                                            <div class="form-group">
+                                                <label>Select Medical Procedures</label>
+                                                <div class="form-check">
+                                                    <input type="checkbox" name="lab_procedures[]" value="CBC" class="form-check-input">
+                                                    <label class="form-check-label">CBC</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input type="checkbox" name="lab_procedures[]" value="X-ray" class="form-check-input">
+                                                    <label class="form-check-label">X-ray</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input type="checkbox" name="lab_procedures[]" value="Urinalysis" class="form-check-input">
+                                                    <label class="form-check-label">Urinalysis</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Submission Buttons -->
+                            <div class="text-right">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Submit Admission
+                                </button>
+                                <a href="view.php" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left"></i> Back to List
+                                </a>
+                            </div>
+                            
                         </form>
                     </div>
                 </div>
@@ -176,6 +210,7 @@
         </div>
     </div>
 </div>
+
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -219,5 +254,93 @@
         $("#lab_schedule_checkbox").change(function () {
             $("#lab_procedures_container, #lab_date_container").toggleClass("d-none", !$(this).is(":checked"));
         });
+    });
+    
+    document.addEventListener("DOMContentLoaded", function () {
+        var symptomsInput = document.querySelector("#symptoms");
+        var tagifySymptoms = new Tagify(symptomsInput, {
+            enforceWhitelist: false,
+            dropdown: {
+                enabled: 1, 
+                maxItems: 10,
+            }
+        });
+
+        function fetchDiagnosis() {
+            var symptomsArray = tagifySymptoms.value.map(tag => tag.value).join(" ");
+
+            if (symptomsArray.length === 0) {
+                $("#ai_diagnosis_list").html('<small class="text-muted">Diagnosis will appear here...</small>');
+                $("#correct_diagnosis_container, #medicine_recommendation_container").addClass("d-none");
+                return;
+            }
+
+            $.ajax({
+                url: "http://localhost:5000/predict",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({ symptoms: symptomsArray }),
+                beforeSend: function () {
+                    $("#ai_diagnosis_list").html('<small class="text-muted">Analyzing...</small>');
+                },
+                success: function (response) {
+                    if (response.predictions && response.predictions.length > 0) {
+                        var resultHtml = '<ul class="list-group">';
+                        var suggestedDiagnosis = response.predictions.map(pred => pred.disease);
+
+                        suggestedDiagnosis.forEach(function (disease) {
+                            resultHtml += `<li class="list-group-item suggested-diagnosis">${disease}</li>`;
+                        });
+
+                        resultHtml += "</ul>";
+                        $("#ai_diagnosis_list").html(resultHtml);
+                        $("#correct_diagnosis").val(suggestedDiagnosis[0] || ""); // Pre-fill with the top diagnosis
+                        $("#correct_diagnosis_container").removeClass("d-none");
+                    } else {
+                        $("#ai_diagnosis_list").html('<small class="text-muted">No diagnosis found.</small>');
+                        $("#correct_diagnosis_container, #medicine_recommendation_container").addClass("d-none");
+                    }
+                },
+                error: function (xhr) {
+                    $("#ai_diagnosis_list").html('<small class="text-danger">Error fetching diagnosis. Please try again.</small>');
+                    console.log(xhr.responseText);
+                }
+            });
+        }
+
+        // Auto-trigger diagnosis
+        tagifySymptoms.on("add", fetchDiagnosis);
+        tagifySymptoms.on("remove", fetchDiagnosis);
+
+        // Clickable AI suggestions to fill input
+        $(document).on("click", ".suggested-diagnosis", function () {
+            $("#correct_diagnosis").val($(this).text());
+            fetchMedicineRecommendations();
+        });
+
+        // Trigger medicine recommendations when diagnosis is entered or changed
+        $("#correct_diagnosis").on("input", function () {
+            fetchMedicineRecommendations();
+        });
+
+        function fetchMedicineRecommendations() {
+            var selectedDiagnosis = $("#correct_diagnosis").val().trim();
+            if (!selectedDiagnosis) {
+                $("#medicine_recommendation_container").addClass("d-none");
+                return;
+            }
+
+            $.ajax({
+                url: "http://localhost:5000/recommend",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({ disease: selectedDiagnosis }),
+                success: function (response) {
+                    var medicineHtml = response.medicines.map(med => `<li class="list-group-item">${med}</li>`).join("");
+                    $("#medicine_list").html(medicineHtml);
+                    $("#medicine_recommendation_container").removeClass("d-none");
+                }
+            });
+        }
     });
 </script>
