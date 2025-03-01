@@ -10,6 +10,9 @@ switch ($action) {
     case 'add_student':
         addStudent();
         break;
+    case 'get_year_levels':
+        getYearLevels();
+        break;
     case 'fetch_students':
         fetchStudents();
         break;
@@ -17,27 +20,35 @@ switch ($action) {
         echo json_encode(["success" => false, "message" => "Invalid action"]);
 }
 
+// Fetch courses based on year level ID
 function getCourses() {
     global $conn;
 
-    $year_level_id = isset($_GET['year_level_id']) ? (int)$_GET['year_level_id'] : 0;
+    $is_college = isset($_GET['is_college']) ? (int)$_GET['is_college'] : -1; 
     $response = ["success" => false, "courses" => []];
 
-    if ($year_level_id > 0) {
-        $query = "SELECT id, name, code FROM courses_strands WHERE year_level_id = $year_level_id";
-        $result = mysqli_query($conn, $query);
+    if ($is_college !== -1) {
+        // Fetch courses based on education level (SHS = 0, College = 1)
+        $query = "SELECT id, name FROM courses_strands WHERE year_level_id IN 
+                 (SELECT id FROM year_levels WHERE is_college = $is_college)";
+    } else {
+        echo json_encode($response);
+        return;
+    }
 
-        if ($result) {
-            while ($row = mysqli_fetch_assoc($result)) {
-                $response["courses"][] = $row;
-            }
-            $response["success"] = true;
+    $result = mysqli_query($conn, $query);
+
+    if ($result) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $response["courses"][] = $row;
         }
+        $response["success"] = true;
     }
 
     echo json_encode($response);
 }
 
+// Add a new student
 function addStudent() {
     global $conn;
 
@@ -50,10 +61,11 @@ function addStudent() {
     $address = mysqli_real_escape_string($conn, $_POST['address']);
     $contact_number = mysqli_real_escape_string($conn, $_POST['contact_number']);
     $parent_contact = mysqli_real_escape_string($conn, $_POST['parent_contact']);
-    $year_level = mysqli_real_escape_string($conn, $_POST['year_level']);
-    $course = mysqli_real_escape_string($conn, $_POST['course']);
+    $year_level = (int)$_POST['year_level'];
+    $course = (int)$_POST['course'];
     $status = mysqli_real_escape_string($conn, $_POST['status']);
 
+    // Validate required fields
     if (empty($firstname) || empty($lastname) || empty($student_number) || empty($birthdate) || 
         empty($address) || empty($contact_number) || empty($parent_contact) || 
         empty($year_level) || empty($course) || empty($status)) {
@@ -61,6 +73,7 @@ function addStudent() {
         exit;
     }
 
+    // Check if student number already exists
     $checkQuery = "SELECT id FROM students WHERE student_number = '$student_number'";
     $checkResult = mysqli_query($conn, $checkQuery);
     if (mysqli_num_rows($checkResult) > 0) {
@@ -68,6 +81,7 @@ function addStudent() {
         exit;
     }
 
+    // Insert new student
     $query = "INSERT INTO students (firstname, lastname, middlename, student_number, birthdate, age, address, contact_number, parent_contact, year_level, course, status) 
               VALUES ('$firstname', '$lastname', '$middlename', '$student_number', '$birthdate', '$age', '$address', '$contact_number', '$parent_contact', '$year_level', '$course', '$status')";
 
@@ -78,24 +92,48 @@ function addStudent() {
     }
 }
 
+// Fetch students based on category (SHS or College)
 function fetchStudents() {
     global $conn;
     $response = ["success" => false, "students" => []];
 
-    $query = "SELECT s.id, 
-                     CONCAT(s.firstname, ' ', s.lastname) AS name, 
-                     yl.name AS year_level, 
-                     cs.name AS course, 
-                     s.email, 
-                     s.status 
-              FROM students s
-              LEFT JOIN year_levels yl ON s.year_level = yl.id
-              LEFT JOIN courses_strands cs ON s.course = cs.id";
+    $category = isset($_GET['category']) ? $_GET['category'] : '';
+
+    if ($category === "shs") {
+        $query = "SELECT s.id, 
+                         CONCAT(s.firstname, ' ', s.lastname) AS name, 
+                         yl.name AS year_level, 
+                         cs.name AS strand, 
+                         s.email, 
+                         s.status 
+                  FROM students s
+                  LEFT JOIN year_levels yl ON s.year_level = yl.id
+                  LEFT JOIN courses_strands cs ON s.course = cs.id
+                  WHERE yl.is_college = 0"; // Fetch SHS students
+    } elseif ($category === "college") {
+        $query = "SELECT s.id, 
+                         CONCAT(s.firstname, ' ', s.lastname) AS name, 
+                         yl.name AS year_level, 
+                         cs.name AS course, 
+                         s.email, 
+                         s.status 
+                  FROM students s
+                  LEFT JOIN year_levels yl ON s.year_level = yl.id
+                  LEFT JOIN courses_strands cs ON s.course = cs.id
+                  WHERE yl.is_college = 1"; // Fetch College students
+    } else {
+        echo json_encode(["success" => false, "message" => "Invalid category."]);
+        exit;
+    }
 
     $result = mysqli_query($conn, $query);
 
     if ($result) {
         while ($row = mysqli_fetch_assoc($result)) {
+            // Handle cases where course/strand may be NULL
+            $row["strand"] = !empty($row["strand"]) ? $row["strand"] : "Not Assigned";
+            $row["course"] = !empty($row["course"]) ? $row["course"] : "Not Assigned";
+
             $response["students"][] = $row;
         }
         $response["success"] = true;
@@ -106,4 +144,23 @@ function fetchStudents() {
     echo json_encode($response);
 }
 
+
+function getYearLevels() {
+    global $conn;
+
+    $is_college = isset($_GET['is_college']) ? (int)$_GET['is_college'] : 0;
+    $response = ["success" => false, "year_levels" => []];
+
+    $query = "SELECT id, name FROM year_levels WHERE is_college = $is_college ORDER BY id ASC";
+    $result = mysqli_query($conn, $query);
+
+    if ($result) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $response["year_levels"][] = $row;
+        }
+        $response["success"] = true;
+    }
+
+    echo json_encode($response);
+}
 ?>

@@ -83,19 +83,26 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label>Year Level</label>
-                                        <select name="year_level" id="year_level" class="form-control" required>
-                                            <option value="">Select Year Level</option>
-                                            <?php
-                                            $query = "SELECT * FROM year_levels ORDER BY is_college ASC, name ASC";
-                                            $result = $conn->query($query);
-                                            while ($row = $result->fetch_assoc()) {
-                                                echo '<option value="' . $row['id'] . '">' . $row['name'] . '</option>';
-                                            }
-                                            ?>
+                                        <label>Education Level</label>
+                                        <select name="education_level" id="education_level" class="form-control" required>
+                                            <option value="">Select Education Level</option>
+                                            <option value="1">Senior High School</option>
+                                            <option value="2">College</option>
                                         </select>
                                     </div>
                                 </div>
+
+                                <!-- Year Level Dropdown -->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Year Level</label>
+                                        <select name="year_level" id="year_level" class="form-control" required>
+                                            <option value="">Select Year Level</option>
+                                            <!-- Options will be loaded dynamically via AJAX -->
+                                        </select>
+                                    </div>
+                                </div>
+
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label>Course/Strand</label>
@@ -105,6 +112,7 @@
                                         </select>
                                     </div>
                                 </div>
+
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label>Status</label>
@@ -147,33 +155,68 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
-    $(document).ready(function () {
-        // Load courses/strands dynamically based on year level selection
-        $("#year_level").change(function () {
-            var yearLevelId = $(this).val();
-            if (yearLevelId) {
-                $.ajax({
-                    url: '../controllers/StudentController.php?action=get_courses',
-                    type: 'GET',
-                    data: { year_level_id: yearLevelId },
-                    dataType: 'json',
-                    success: function (response) {
-                        if (response.success) {
-                            var options = '<option value="">Select Course/Strand</option>';
-                            $.each(response.courses, function (index, course) {
-                                options += '<option value="' + course.id + '">' + course.code + '</option>';
-                            });
-                            $("#course").html(options);
-                        } else {
-                            $("#course").html('<option value="">No courses available</option>');
-                        }
-                    }
-                });
-            } else {
-                $("#course").html('<option value="">Select Course/Strand</option>');
-            }
-        });
+$(document).ready(function () {
+    $("#education_level").change(function () {
+        var educationLevel = $(this).val();
+        console.log("Selected Education Level: ", educationLevel); // Debugging log
 
+        if (educationLevel) {
+            // Fetch year levels based on education level (SHS = 1, College = 2)
+            $.ajax({
+                url: '../controllers/StudentController.php?action=get_year_levels',
+                type: 'GET',
+                data: { is_college: educationLevel === "2" ? 1 : 0 },
+                dataType: 'json',
+                success: function (response) {
+                    console.log("Year Levels Response:", response); // Debugging log
+                    if (response.success) {
+                        var options = '<option value="">Select Year Level</option>';
+                        $.each(response.year_levels, function (index, year) {
+                            options += '<option value="' + year.id + '">' + year.name + '</option>';
+                        });
+                        $("#year_level").html(options);
+                    } else {
+                        $("#year_level").html('<option value="">No year levels available</option>');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Year Levels Error:", xhr.responseText); // Debugging log
+                    alert("Failed to load year levels.");
+                }
+            });
+
+            // Fetch courses based on year_level_id (1 for SHS, 2 for College)
+            $("#course").html('<option value="">Loading...</option>');
+            $.ajax({
+                url: '../controllers/StudentController.php?action=get_courses',
+                type: 'GET',
+                data: { year_level_id: educationLevel === "2" ? 2 : 1 }, // SHS -> 1, College -> 2
+                dataType: 'json',
+                success: function (response) {
+                    console.log("Courses Response:", response); // Debugging log
+                    if (response.success) {
+                        var options = '<option value="">Select Course/Strand</option>';
+                        $.each(response.courses, function (index, course) {
+                            options += '<option value="' + course.id + '">' + course.name + '</option>';
+                        });
+                        $("#course").html(options);
+                    } else {
+                        $("#course").html('<option value="">No courses available</option>');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Courses Error:", xhr.responseText); // Debugging log
+                    alert("Failed to load courses/strands.");
+                }
+            });
+        } else {
+            $("#year_level").html('<option value="">Select Year Level</option>');
+            $("#course").html('<option value="">Select Course/Strand</option>');
+        }
+    });
+});
+
+    $(document).ready(function () {
         // Calculate age from birthdate
         $("#birthdate").change(function () {
             var birthdate = new Date($(this).val());
