@@ -28,62 +28,30 @@
                     </div>
                 </div>
 
-                <!-- Medical Schedule Section -->
-                <div class="row">
+                <!-- Medical Schedule Section (Dynamically Loaded) -->
+                <!-- <div class="row">
                     <div class="col-lg-12">
                         <div class="card shadow mb-4">
                             <div class="card-header py-3">
                                 <h6 class="m-0 font-weight-bold text-primary">Medical Schedule</h6>
                             </div>
                             <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered">
-                                        <thead>
-                                            <tr>
-                                                <th>Year Level</th>
-                                                <th>Time</th>
-                                                <th>Schedule</th>
-                                                <th>Status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>SHS</td>
-                                                <td>8:00 AM - 5:00 PM</td>
-                                                <td>Monday</td>
-                                                <td><span class="badge badge-success">Finished</span></td>
-                                            </tr>
-                                            <tr>
-                                                <td>First Year</td>
-                                                <td>8:00 AM - 5:00 PM</td>
-                                                <td>Tuesday</td>
-                                                <td><span class="badge badge-warning">Ongoing</span></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Second Year</td>
-                                                <td>8:00 AM - 5:00 PM</td>
-                                                <td>Wednesday</td>
-                                                <td><span class="badge badge-danger">Pending</span></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Third Year</td>
-                                                <td>8:00 AM - 5:00 PM</td>
-                                                <td>Thursday</td>
-                                                <td><span class="badge badge-danger">Pending</span></td>
-                                            </tr>
-                                            <tr>
-                                                <td>Fourth Year</td>
-                                                <td>8:00 AM - 5:00 PM</td>
-                                                <td>Friday</td>
-                                                <td><span class="badge badge-danger">Pending</span></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                <div id="medicalScheduleContainer">
+                                    <p class="text-center">Loading medical schedule...</p>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
+
+                <!-- Lab Schedule Overview -->
+                <!-- <div class="row">
+                    <div class="col-lg-12">
+                        <div id="labScheduleContainer">
+                            <p class="text-center">Loading lab schedule...</p>
+                        </div>
+                    </div>
+                </div>-->
 
             </div>
         </div>
@@ -103,12 +71,20 @@
 
 <script>
     $(document).ready(function () {
+        loadDashboardData();
+        loadMedicalSchedule();
+        loadLabSchedule();
+
+        /** 
+         * Function to Load Dashboard Data 
+         */
         function loadDashboardData() {
             $.ajax({
                 url: '../controllers/DashboardController.php?action=all',
                 type: 'GET',
                 dataType: 'json',
                 success: function (response) {
+                    console.log("Dashboard Data Response:", response); // Debugging
                     if (response.success) {
                         $("#dashboard-cards").html(response.html);
 
@@ -121,12 +97,15 @@
                         console.error("Error loading data: " + response.error);
                     }
                 },
-                error: function () {
-                    console.error("Failed to fetch data from server.");
+                error: function (xhr, status, error) {
+                    console.error("AJAX Error:", status, error);
                 }
             });
         }
 
+        /** 
+         * Function to Update Medical Cases Chart 
+         */
         function updateMedicalChart(labels, data) {
             $("#admissionsChart").html(""); // Clear previous chart
             var options = {
@@ -154,6 +133,40 @@
             chart.render();
         }
 
-        loadDashboardData();
+        /**
+         * Function to Load Medical Schedule
+         */
+        function loadMedicalSchedule() {
+            $.ajax({
+                url: '../controllers/DashboardController.php?action=medical_schedule',
+                type: 'GET',
+                dataType: 'html',
+                success: function (response) {
+                    $("#medicalScheduleContainer").html(response);
+                },
+                error: function () {
+                    $("#medicalScheduleContainer").html("<p class='text-center text-danger'>Failed to load medical schedule.</p>");
+                }
+            });
+        }
+
+        function loadLabSchedule() {
+            $.ajax({
+                url: '../controllers/DashboardController.php?action=lab_schedule',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.success) {
+                        $("#labScheduleContainer").html(response.labSchedule);
+                    } else {
+                        $("#labScheduleContainer").html("<p class='text-center text-danger'>Failed to load lab schedule.</p>");
+                    }
+                },
+                error: function () {
+                    $("#labScheduleContainer").html("<p class='text-center text-danger'>Failed to fetch data.</p>");
+                }
+            });
+        }
+
     });
 </script>
