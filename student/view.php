@@ -98,6 +98,9 @@
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.3/js/bootstrap.bundle.min.js"></script>
 
+<!-- Include QR Code Library -->
+<script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+
 <script>
     $(document).ready(function () {
         var shsTable, collegeTable;
@@ -113,20 +116,25 @@
                         $.each(response, function (index, student) {
                             var statusBadge = '<span class="badge badge-success">Active</span>';
                             var studentId = student.studentId;
-                            
-                            // Create View and Add Medical Record Buttons
+                            var studentName = student.name;
+                            var qrData = "http://localhost/crms-ai/medical/medical_records.php?id=" + studentId;
+
+                            // Create View, Add Medical Record, and QR Code Buttons
                             var actions = `
                                 <a href='../medical/medical_records.php?id=${studentId}' class='btn btn-sm btn-warning'>
                                     <i class='fas fa-file-medical'></i> View Medical
                                 </a>
-                                <a href='medical_records.php?id=${studentId}' class='btn btn-sm btn-success'>
+                                <a href='../medical/add_medical_record.php?id=${studentId}' class='btn btn-sm btn-success'>
                                     <i class='fas fa-plus'></i> Add Medical
                                 </a>
+                                <button class='btn btn-sm btn-secondary' onclick="generateQrCode('${qrData}', '${studentName}')">
+                                    <i class='fas fa-qrcode'></i> QR Code
+                                </button>
                             `;
 
                             var studentRow = "<tr>" +
                                 "<td>" + studentId + "</td>" +
-                                "<td>" + student.name + "</td>" +
+                                "<td>" + studentName + "</td>" +
                                 "<td>" + student.level + "</td>" +
                                 "<td>" + student.course + "</td>" +
                                 "<td>" + student.email + "</td>" +
@@ -155,10 +163,57 @@
         }
 
         loadStudentData();
-
-        $('#studentTabs a').on('click', function (e) {
-            e.preventDefault();
-            $(this).tab('show');
-        });
     });
+
+    // Function to Generate & Download QR Code
+    function generateQrCode(url, studentName) {
+        var qr = new QRious({
+            element: document.getElementById("qrCanvas"),
+            value: url,
+            size: 200
+        });
+
+        $("#qrStudentName").text(studentName);
+        $("#qrModal").modal("show");
+    }
+
+    function downloadQrCode() {
+        var canvas = document.getElementById("qrCanvas");
+        var studentName = $("#qrStudentName").text();
+        var link = document.createElement("a");
+        link.download = studentName + "_QR.png";
+        link.href = canvas.toDataURL();
+        link.click();
+    }
+
+    function printQrCode() {
+        var printWindow = window.open('', '_blank');
+        var canvas = document.getElementById("qrCanvas");
+        var imgData = canvas.toDataURL();
+        var studentName = $("#qrStudentName").text();
+
+        printWindow.document.write('<html><head><title>Print QR Code</title></head><body>');
+        printWindow.document.write('<h2>' + studentName + '</h2>');
+        printWindow.document.write('<img src="' + imgData + '">');
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+        printWindow.print();
+    }
 </script>
+
+<!-- QR Code Modal -->
+<div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Medical History QR Code</h5>
+            </div>
+            <div class="modal-body text-center">
+                <canvas id="qrCanvas"></canvas>
+                <h5 id="qrStudentName"></h5>
+                <button class="btn btn-primary" onclick="downloadQrCode()">Download</button>
+                <button class="btn btn-secondary" onclick="printQrCode()">Print</button>
+            </div>
+        </div>
+    </div>
+</div>
