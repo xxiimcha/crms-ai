@@ -235,21 +235,27 @@
             var studentNumber = $(this).val().trim();
             if (studentNumber.length > 0) {
                 $.ajax({
-                    url: '../controllers/AdmissionController.php?action=get_student_details',
+                    url: 'https://enrollment.bcp-sms1.com/fetch_students/fetch_students_info_nova.php',
                     type: 'GET',
-                    data: { student_number: studentNumber },
                     dataType: 'json',
                     success: function (response) {
-                        if (response.success) {
-                            $("#student_firstname").val(response.student.firstname);
-                            $("#student_lastname").val(response.student.lastname);
-                            $("#student_email").val(response.student.email);
-                            $("#student_year_level").val(response.student.year_level);
-                            $("#student_course").val(response.student.course);
-                            $("#studentInfo").removeClass("d-none");
-                        } else {
+                        let studentFound = false;
+                        response.forEach(student => {
+                            if (student.studentId === studentNumber) {
+                                $("#student_firstname").val(student.name.split(" ")[0]);
+                                $("#student_lastname").val(student.name.split(" ").slice(1).join(" "));
+                                $("#student_email").val(student.email);
+                                $("#studentInfo").removeClass("d-none");
+                                studentFound = true;
+                            }
+                        });
+
+                        if (!studentFound) {
                             $("#studentInfo").addClass("d-none");
                         }
+                    },
+                    error: function () {
+                        $("#studentInfo").addClass("d-none");
                     }
                 });
             }

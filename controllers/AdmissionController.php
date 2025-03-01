@@ -24,30 +24,45 @@ function fetchAdmissions() {
     global $conn;
     $response = ["success" => false, "admissions" => []];
 
-    $query = "SELECT a.id, 
-                     a.admission_type,
-                     CASE 
-                        WHEN a.admission_type = 'Student' THEN COALESCE(CONCAT(s.firstname, ' ', s.lastname), 'Unknown')
-                        ELSE CONCAT(a.firstname, ' ', a.lastname) 
-                     END AS name, 
-                     COALESCE(s.student_number, a.student_id, 'N/A') AS student_number,
-                     COALESCE(yl.name, 'N/A') AS year_level, 
-                     COALESCE(cs.name, 'N/A') AS course, 
-                     COALESCE(a.email, s.email, 'N/A') AS email, 
-                     a.symptoms, 
-                     a.diagnosis,
-                     a.status 
-              FROM admissions a
-              LEFT JOIN students s ON s.student_number = a.student_id
-              LEFT JOIN year_levels yl ON s.year_level = yl.id
-              LEFT JOIN courses_strands cs ON s.course = cs.id
-              ORDER BY a.id DESC";
+    // Fetch admission records from database
+    $query = "SELECT id, admission_type, student_id, firstname, lastname, email, symptoms, diagnosis, status 
+              FROM admissions 
+              ORDER BY id DESC";
 
     $result = mysqli_query($conn, $query);
 
+    // Fetch student details from API
+    $api_url = "https://enrollment.bcp-sms1.com/fetch_students/fetch_students_info_nova.php";
+    $student_data = json_decode(file_get_contents($api_url), true);
+    $students = [];
+
+    // Store students in associative array (key: studentId)
+    if (!empty($student_data)) {
+        foreach ($student_data as $student) {
+            $students[$student['studentId']] = $student;
+        }
+    }
+
     if ($result) {
         while ($row = mysqli_fetch_assoc($result)) {
-            $response["admissions"][] = $row;
+            $student_id = $row['student_id'];
+            $student_info = isset($students[$student_id]) ? $students[$student_id] : null;
+
+            // Construct response combining admission and student details
+            $response["admissions"][] = [
+                "id" => $row["id"],
+                "admission_type" => $row["admission_type"],
+                "name" => $row["admission_type"] === "Student" && $student_info 
+                          ? $student_info["name"] 
+                          : trim($row["firstname"] . " " . $row["lastname"]),
+                "student_number" => $student_info ? $student_info["studentId"] : "N/A",
+                "year_level" => $student_info ? $student_info["level"] : "N/A",
+                "course" => $student_info ? $student_info["course"] : "N/A",
+                "email" => $student_info ? $student_info["email"] : $row["email"],
+                "symptoms" => $row["symptoms"],
+                "diagnosis" => $row["diagnosis"],
+                "status" => $row["status"]
+            ];
         }
         $response["success"] = true;
     } else {
@@ -99,7 +114,7 @@ function saveAdmission() {
 
     // Capture Admission Form Data
     $admission_type = mysqli_real_escape_string($conn, $_POST['admission_type']);
-    $student_id = !empty($_POST['student_id']) ? (int)$_POST['student_id'] : 'NULL';
+    $student_number = isset($_POST['student_number']) ? mysqli_real_escape_string($conn, $_POST['student_number']) : NULL;
     $firstname = mysqli_real_escape_string($conn, $_POST['firstname'] ?? '');
     $lastname = mysqli_real_escape_string($conn, $_POST['lastname'] ?? '');
     $email = mysqli_real_escape_string($conn, $_POST['email'] ?? '');
@@ -107,9 +122,9 @@ function saveAdmission() {
     $diagnosis = mysqli_real_escape_string($conn, $_POST['correct_diagnosis']);
     $status = "Pending"; // Default status for new admissions
 
-    // Insert into admissions table
+    // Insert into admissions table (Now storing student_number instead of student_id)
     $admissionQuery = "INSERT INTO admissions (admission_type, student_id, firstname, lastname, email, symptoms, diagnosis, status) 
-                       VALUES ('$admission_type', $student_id, '$firstname', '$lastname', '$email', '$symptoms', '$diagnosis', '$status')";
+                       VALUES ('$admission_type', '$student_number', '$firstname', '$lastname', '$email', '$symptoms', '$diagnosis', '$status')";
 
     if (mysqli_query($conn, $admissionQuery)) {
         $admission_id = mysqli_insert_id($conn);
@@ -127,7 +142,6 @@ function saveAdmission() {
 
     echo json_encode($response);
 }
-
 /**
  * Save Lab Test Details
  */

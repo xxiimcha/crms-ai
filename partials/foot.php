@@ -4,7 +4,6 @@
 <script src="../assets/js/sb-admin-2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
-
 <!-- DataTables & Bootstrap Scripts -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
