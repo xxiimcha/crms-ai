@@ -6,58 +6,63 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import Pipeline
 import joblib
 import os
+import numpy as np
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for frontend communication
+CORS(app)
 
-# Path to save model
-MODEL_PATH = "disease_model.pkl"
+# Paths to save models
+DISEASE_MODEL_PATH = "disease_model.pkl"
+MEDICINE_DATASET_PATH = "medicine_dataset.csv"
 
-# Medicine recommendations (Modify as needed)
-MEDICINE_RECOMMENDATIONS = {
-    "Over Fatigue": ["Paracetamol", "Vitamin B Complex", "Hydration"],
-    "Migraine": ["Ibuprofen", "Sumatriptan", "Caffeine"],
-    "Flu": ["Paracetamol", "Antihistamine", "Cough Syrup"],
-    "Anemia": ["Iron Supplements", "Vitamin C", "Folic Acid"]
-}
-
-# Function to train and save model
-def train_model():
-    print("🔹 Training AI Diagnosis Model...\n")
+# Function to train and save disease model
+def train_disease_model():
+    print("Training AI Diagnosis Model...")
 
     try:
         dataset_path = "dataset.csv"
         if not os.path.exists(dataset_path):
-            raise FileNotFoundError("❌ Dataset file not found. Please provide 'dataset.csv'.")
+            raise FileNotFoundError("Dataset file not found. Please provide 'dataset.csv'.")
 
         df = pd.read_csv(dataset_path)
         symptom_columns = [col for col in df.columns if col.startswith("Symptom_")]
 
         if "Disease" not in df.columns or not symptom_columns:
-            raise ValueError("❌ CSV must contain 'Disease' and at least one 'Symptom_' column.")
+            raise ValueError("CSV must contain 'Disease' and at least one 'Symptom_' column.")
 
         df["All_Symptoms"] = df[symptom_columns].astype(str).agg(" ".join, axis=1)
         df = df[["Disease", "All_Symptoms"]].dropna()
 
         pipeline = Pipeline([
-            ("vectorizer", TfidfVectorizer()), 
-            ("classifier", MultinomialNB())  
+            ("vectorizer", TfidfVectorizer()),
+            ("classifier", MultinomialNB())
         ])
 
         pipeline.fit(df["All_Symptoms"], df["Disease"])
-        joblib.dump(pipeline, MODEL_PATH)
+        joblib.dump(pipeline, DISEASE_MODEL_PATH)
 
-        print(f"✅ Model training complete. {len(df)} samples used.")
+        print(f"Model training complete. {len(df)} samples used.")
     except Exception as e:
-        print(f"\n❌ Training failed: {str(e)}")
+        print(f"Training failed: {str(e)}")
 
-# Load or train model
-if os.path.exists(MODEL_PATH):
-    print("🔹 Loading existing AI model...\n")
-    model = joblib.load(MODEL_PATH)
+# Function to load medicine dataset dynamically
+def load_medicine_recommendations():
+    if os.path.exists(MEDICINE_DATASET_PATH):
+        df = pd.read_csv(MEDICINE_DATASET_PATH)
+        if "Disease" in df.columns and "Medicine" in df.columns:
+            return df.groupby("Disease")["Medicine"].apply(list).to_dict()
+    return {}
+
+# Load or train models
+if os.path.exists(DISEASE_MODEL_PATH):
+    print("Loading existing AI model...")
+    disease_model = joblib.load(DISEASE_MODEL_PATH)
 else:
-    train_model()
-    model = joblib.load(MODEL_PATH)
+    train_disease_model()
+    disease_model = joblib.load(DISEASE_MODEL_PATH)
+
+# Load medicine recommendations
+medicine_recommendations = load_medicine_recommendations()
 
 # API Endpoint for AI Diagnosis
 @app.route("/predict", methods=["POST"])
@@ -69,9 +74,9 @@ def predict():
         if not symptoms:
             return jsonify({"error": "No symptoms provided"}), 400
 
-        prediction_probs = model.predict_proba([symptoms])[0]
-        top_indices = prediction_probs.argsort()[-3:][::-1]
-        top_diseases = model.classes_[top_indices]
+        prediction_probs = disease_model.predict_proba([symptoms])[0]
+        top_indices = np.argsort(prediction_probs)[-3:][::-1]
+        top_diseases = disease_model.classes_[top_indices]
 
         predictions = [{"disease": disease} for disease in top_diseases]
         return jsonify({"predictions": predictions})
@@ -89,7 +94,7 @@ def recommend():
         if not confirmed_disease:
             return jsonify({"error": "No disease provided"}), 400
 
-        medicines = MEDICINE_RECOMMENDATIONS.get(confirmed_disease, ["Consult a doctor for proper medication."])
+        medicines = medicine_recommendations.get(confirmed_disease, ["Consult a doctor for proper medication."])
         return jsonify({"medicines": medicines})
 
     except Exception as e:

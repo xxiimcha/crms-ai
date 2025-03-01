@@ -1,5 +1,6 @@
 <?php include('../partials/head.php'); ?>
 <?php include('../config/database.php'); ?>
+
 <div id="wrapper">
     <?php include('../partials/sidebar.php'); ?>
 
@@ -106,20 +107,6 @@
                                                 <input name="symptoms" id="symptoms" class="form-control" placeholder="Enter symptoms..." required>
                                             </div>
                                         </div>
-
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Medical History</label>
-                                                <textarea name="medical_history" class="form-control" placeholder="Mention any medical history..." required></textarea>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Current Medications</label>
-                                                <textarea name="current_medications" class="form-control" placeholder="List current medications..." required></textarea>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -211,8 +198,7 @@
     </div>
 </div>
 
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<?php include('../partials/foot.php'); ?>
 
 <script>
     $(document).ready(function () {
