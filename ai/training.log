@@ -1,0 +1,12 @@
+2025-02-24 15:18:17 - INFO - \U0001f539 Starting AI Model Training...
+2025-02-24 15:18:17 - INFO - \U0001f4c2 Dataset loaded from dataset.csv
+2025-02-24 15:18:17 - INFO - \u2705 All required columns found.
+2025-02-24 15:18:17 - INFO - \U0001f5d1 Removed 0 rows with missing values.
+2025-02-24 15:18:17 - INFO - \u2705 Model training completed. 912 samples used.
+2025-02-24 15:18:17 - INFO - \U0001f4be Model saved successfully as disease_model.pkl
+2025-02-24 15:18:58 - INFO - \U0001f539 Starting AI Model Training...
+2025-02-24 15:18:58 - INFO - \U0001f4c2 Dataset loaded from dataset.csv
+2025-02-24 15:18:58 - INFO - \u2705 All required columns found.
+2025-02-24 15:18:58 - INFO - \U0001f5d1 Removed 0 rows with missing values.
+2025-02-24 15:18:58 - INFO - \u2705 Model training completed. 4920 samples used.
+2025-02-24 15:18:58 - INFO - \U0001f4be Model saved successfully as disease_model.pkl

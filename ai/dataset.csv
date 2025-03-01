@@ -1,0 +1,11 @@
+Disease,Symptom_1,Symptom_2,Symptom_3,Symptom_4,Symptom_5
+Flu,fever,cough,sore throat,fatigue,muscle aches
+COVID-19,fever,cough,shortness of breath,loss of taste,loss of smell
+Common Cold,runny nose,sneezing,sore throat,cough,
+Migraine,headache,nausea,light sensitivity,,
+Overfatigue,dizzy,blurred vision,headache,,
+Hypertension,headache,blurred vision,dizziness,nosebleeds,
+Diabetes,frequent urination,increased thirst,fatigue,,
+Gastroenteritis,diarrhea,vomiting,stomach cramps,,
+Allergic Rhinitis,sneezing,runny nose,itchy eyes,,
+Pneumonia,fever,cough,chest pain,,

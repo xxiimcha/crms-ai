@@ -124,17 +124,41 @@
                                         <textarea name="current_medications" class="form-control" placeholder="List current medications..." required></textarea>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="row">
+                                <!-- Laboratory Schedule Checkbox -->
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>Status</label>
-                                        <select name="status" class="form-control" required>
-                                            <option value="Pending">Pending</option>
-                                            <option value="Accepted">Accepted</option>
-                                            <option value="Rejected">Rejected</option>
-                                        </select>
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" id="lab_schedule_checkbox">
+                                            <label class="form-check-label" for="lab_schedule_checkbox">Schedule Laboratory Test</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Medical Procedures Selection -->
+                                <div class="col-md-6 d-none" id="lab_procedures_container">
+                                    <div class="form-group">
+                                        <label>Select Medical Procedures</label>
+                                        <div class="form-check">
+                                            <input type="checkbox" name="lab_procedures[]" value="CBC" class="form-check-input">
+                                            <label class="form-check-label">CBC</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input type="checkbox" name="lab_procedures[]" value="X-ray" class="form-check-input">
+                                            <label class="form-check-label">X-ray</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input type="checkbox" name="lab_procedures[]" value="Urinalysis" class="form-check-input">
+                                            <label class="form-check-label">Urinalysis</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Laboratory Date Picker -->
+                                <div class="col-md-6 d-none" id="lab_date_container">
+                                    <div class="form-group">
+                                        <label>Laboratory Date</label>
+                                        <input type="date" name="lab_date" id="lab_date" class="form-control">
                                     </div>
                                 </div>
                             </div>
@@ -150,25 +174,13 @@
                 </div>
             </div>
         </div>
-
-        <footer class="sticky-footer bg-white">
-            <div class="container my-auto">
-                <div class="copyright text-center my-auto">
-                    <span>Copyright &copy; Your Website 2025</span>
-                </div>
-            </div>
-        </footer>
     </div>
 </div>
-
-<?php include('../partials/modal.php'); ?>
-<?php include('../partials/foot.php'); ?>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
     $(document).ready(function () {
-        // Toggle fields based on admission type
         $("#admission_type").change(function () {
             var type = $(this).val();
             if (type === "Student") {
@@ -180,7 +192,6 @@
             }
         });
 
-        // Fetch student details when typing Student Number
         $("#student_number").on("input", function () {
             var studentNumber = $(this).val().trim();
             if (studentNumber.length > 0) {
@@ -202,9 +213,11 @@
                         }
                     }
                 });
-            } else {
-                $("#studentInfo, #studentAcademicInfo").addClass("d-none");
             }
+        });
+
+        $("#lab_schedule_checkbox").change(function () {
+            $("#lab_procedures_container, #lab_date_container").toggleClass("d-none", !$(this).is(":checked"));
         });
     });
 </script>
