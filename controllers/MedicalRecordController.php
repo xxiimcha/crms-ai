@@ -16,51 +16,63 @@ switch ($action) {
     default:
         echo json_encode(["success" => false, "message" => "Invalid action"]);
 }
+
+/**
+ * Fetch student details from external API and medical records from local DB
+ */
 function fetchMedicalRecords() {
     global $conn;
     $response = ["success" => false, "records" => []];
-
     $student_id = isset($_GET['student_id']) ? (int)$_GET['student_id'] : 0;
 
-    // Ensure student_id is valid
-    if ($student_id < 0) {
-        $response["message"] = "Invalid student ID.";
-        echo json_encode($response);
+    if ($student_id <= 0) {
+        echo json_encode(["success" => false, "message" => "Invalid student ID"]);
         return;
     }
 
-    // Query to fetch medical records along with student details
-    $student_query = "SELECT 
-                    s.id, 
-                    CONCAT(s.firstname, ' ', s.lastname) AS name, 
-                    yl.name AS year_level, 
-                    cs.name AS course_or_strand 
-                FROM students s
-                LEFT JOIN year_levels yl ON s.year_level = yl.id
-                LEFT JOIN courses_strands cs ON s.course = cs.id
-                WHERE s.id = $student_id";
+    // Fetch student details from external API
+    $api_url = "https://enrollment.bcp-sms1.com/fetch_students/fetch_students_info_nova.php";
+    $api_response = file_get_contents($api_url);
+    $students = json_decode($api_response, true);
 
-
-    // If student ID is provided, filter by student ID
-    if ($student_id > 0) {
-        $query .= " WHERE s.id = $student_id";
-    }
-
-    $result = mysqli_query($conn, $query);
-
-    if ($result) {
-        while ($row = mysqli_fetch_assoc($result)) {
-            $response["records"][] = $row;
+    $student_data = null;
+    foreach ($students as $student) {
+        if ($student['studentId'] == $student_id) {
+            $student_data = [
+                'student_id' => $student['studentId'],
+                'name' => $student['name'],
+                'year_level' => $student['level'],
+                'course_or_strand' => $student['course'],
+                'email' => $student['email']
+            ];
+            break;
         }
-        $response["success"] = true;
-    } else {
-        $response["message"] = "Error fetching records: " . mysqli_error($conn);
     }
 
+    if (!$student_data) {
+        echo json_encode(["success" => false, "message" => "Student not found in API"]);
+        return;
+    }
+
+    // Fetch medical record from local database
+    $medical_query = "SELECT * FROM medical_records WHERE student_id = $student_id";
+    $medical_result = mysqli_query($conn, $medical_query);
+    if ($medical_result && mysqli_num_rows($medical_result) > 0) {
+        while ($row = mysqli_fetch_assoc($medical_result)) {
+            $student_data["medical_records"][] = $row;
+        }
+    } else {
+        $student_data["medical_records"] = [];
+    }
+
+    $response["success"] = true;
+    $response["records"] = $student_data;
     echo json_encode($response);
 }
 
-
+/**
+ * Save Medical Record
+ */
 function saveMedicalRecord() {
     global $conn;
 
@@ -78,24 +90,6 @@ function saveMedicalRecord() {
     $existing_conditions = mysqli_real_escape_string($conn, $_POST['existing_conditions']);
     $doctors_notes = mysqli_real_escape_string($conn, $_POST['doctors_notes']);
     $medical_report = "";
-
-    // Check if the student exists
-    $studentCheckQuery = "SELECT id FROM students WHERE id = $student_id";
-    $studentCheckResult = mysqli_query($conn, $studentCheckQuery);
-
-    if (mysqli_num_rows($studentCheckResult) == 0) {
-        echo json_encode(["success" => false, "message" => "Invalid student ID."]);
-        return;
-    }
-
-    // Check if a record already exists for this student
-    $checkDuplicate = "SELECT id FROM medical_records WHERE student_id = $student_id";
-    $checkResult = mysqli_query($conn, $checkDuplicate);
-
-    if (mysqli_num_rows($checkResult) > 0) {
-        echo json_encode(["success" => false, "message" => "Medical record already exists for this student."]);
-        return;
-    }
 
     // Handle file upload (if provided)
     if (!empty($_FILES["medical_report"]["name"])) {
@@ -131,6 +125,9 @@ function saveMedicalRecord() {
     }
 }
 
+/**
+ * Delete Medical Record
+ */
 function deleteMedicalRecord() {
     global $conn;
     $id = isset($_POST['id']) ? (int)$_POST['id'] : 0;

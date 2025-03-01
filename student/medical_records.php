@@ -1,5 +1,4 @@
 <?php include('../partials/head.php'); ?>
-<?php include('../config/database.php'); ?>
 
 <?php
 // Get student ID from URL
@@ -7,13 +6,31 @@ $student_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $student = null;
 $medical_record = null;
 
-// Fetch student details
+// Fetch student details from the external API
 if ($student_id > 0) {
-    $student_query = "SELECT id, CONCAT(firstname, ' ', lastname) AS name, year_level, course FROM students WHERE id = $student_id";
-    $student_result = mysqli_query($conn, $student_query);
-    $student = mysqli_fetch_assoc($student_result);
+    $api_url = "https://enrollment.bcp-sms1.com/fetch_students/fetch_students_info_nova.php";
 
-    // Fetch medical record if exists
+    // Fetch the data
+    $response = file_get_contents($api_url);
+    $students = json_decode($response, true);
+
+    // Find the student by ID
+    foreach ($students as $s) {
+        if ($s['studentId'] == $student_id) {
+            $student = [
+                'name' => $s['name'],
+                'year_level' => $s['level'],
+                'course_or_strand' => $s['course'],
+                'email' => $s['email']
+            ];
+            break;
+        }
+    }
+}
+
+// Fetch medical record from local database
+include('../config/database.php');
+if ($student_id > 0) {
     $medical_query = "SELECT * FROM medical_records WHERE student_id = $student_id";
     $medical_result = mysqli_query($conn, $medical_query);
     if (mysqli_num_rows($medical_result) > 0) {
@@ -41,30 +58,28 @@ if ($student_id > 0) {
                             <input type="hidden" name="student_id" value="<?= $student_id ?>">
 
                             <!-- Student Information -->
-                            <!-- Student Information -->
-<div class="row">
-    <div class="col-md-6">
-        <div class="form-group">
-            <label>Student Name</label>
-            <input type="text" class="form-control" value="<?= $student['name'] ?? '' ?>" readonly>
-        </div>
-    </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Student Name</label>
+                                        <input type="text" class="form-control" value="<?= $student['name'] ?? '' ?>" readonly>
+                                    </div>
+                                </div>
 
-    <div class="col-md-3">
-        <div class="form-group">
-            <label>Year Level</label>
-            <input type="text" class="form-control" value="<?= $student['year_level'] ?? '' ?>" readonly>
-        </div>
-    </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Year Level</label>
+                                        <input type="text" class="form-control" value="<?= $student['year_level'] ?? '' ?>" readonly>
+                                    </div>
+                                </div>
 
-    <div class="col-md-3">
-        <div class="form-group">
-            <label>Course/Strand</label>
-            <input type="text" class="form-control" value="<?= $student['course_or_strand'] ?? '' ?>" readonly>
-        </div>
-    </div>
-</div>
-
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Course/Strand</label>
+                                        <input type="text" class="form-control" value="<?= $student['course_or_strand'] ?? '' ?>" readonly>
+                                    </div>
+                                </div>
+                            </div>
 
                             <!-- Medical History Section -->
                             <div class="row">
@@ -82,6 +97,17 @@ if ($student_id > 0) {
                                         </div>
                                     </div>
                                 </div>
+                                
+                                <!-- Medications -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Are you currently taking any medications?</label>
+                                        <div>
+                                            <label><input type="radio" name="medications" value="Yes" <?= isset($medical_record['medications']) && $medical_record['medications'] == 'Yes' ? 'checked' : '' ?> required> Yes</label>
+                                            <label class="ml-3"><input type="radio" name="medications" value="No" <?= isset($medical_record['medications']) && $medical_record['medications'] == 'No' ? 'checked' : '' ?>> No</label>
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <!-- Surgeries -->
                                 <div class="col-md-6">
@@ -90,17 +116,6 @@ if ($student_id > 0) {
                                         <div>
                                             <label><input type="radio" name="surgeries" value="Yes" <?= isset($medical_record['surgeries']) && $medical_record['surgeries'] == 'Yes' ? 'checked' : '' ?> required> Yes</label>
                                             <label class="ml-3"><input type="radio" name="surgeries" value="No" <?= isset($medical_record['surgeries']) && $medical_record['surgeries'] == 'No' ? 'checked' : '' ?>> No</label>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Medications -->
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label>Are you currently taking any medications?</label>
-                                        <div>
-                                            <label><input type="radio" name="medications" value="Yes" <?= isset($medical_record['medications']) && $medical_record['medications'] == 'Yes' ? 'checked' : '' ?> required> Yes</label>
-                                            <label class="ml-3"><input type="radio" name="medications" value="No" <?= isset($medical_record['medications']) && $medical_record['medications'] == 'No' ? 'checked' : '' ?>> No</label>
                                         </div>
                                     </div>
                                 </div>
@@ -157,6 +172,10 @@ if ($student_id > 0) {
 <?php include('../partials/modal.php'); ?>
 <?php include('../partials/foot.php'); ?>
 
+<!-- Toastr and jQuery -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
@@ -174,14 +193,16 @@ if ($student_id > 0) {
                 dataType: 'json',
                 success: function (response) {
                     if (response.success) {
-                        alert("Medical record saved successfully!");
-                        window.location.href = "medical_records.php";
+                        toastr.success("Medical record saved successfully!");
+                        setTimeout(function () {
+                            window.location.href = "view.php";
+                        }, 2000);
                     } else {
-                        alert("Error: " + response.message);
+                        toastr.error("Error: " + response.message);
                     }
                 },
                 error: function () {
-                    alert("Failed to save medical record.");
+                    toastr.error("Failed to save medical record.");
                 }
             });
         });
