@@ -9,22 +9,22 @@ if ($action == 'inventory_report') {
     generatePatientReport();
 } elseif ($action == 'cases_report') {
     generateCasesReport();
+} elseif ($action == 'medicine_stock_report') {
+    generateMedicineStockReport();
 }
 
 function generateInventoryReport() {
     global $conn;
     $month = $_POST['month'];
+    $monthEscaped = mysqli_real_escape_string($conn, $month);
 
-    $query = "SELECT * FROM medical_supplies WHERE MONTH(created_at) = MONTH(?) AND YEAR(created_at) = YEAR(?)";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("ss", $month, $month);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $query = "SELECT * FROM medical_supplies WHERE MONTH(created_at) = MONTH('$monthEscaped') AND YEAR(created_at) = YEAR('$monthEscaped')";
+    $result = mysqli_query($conn, $query);
 
-    echo "<h5>Monthly Inventory Report for " . date("F Y", strtotime($month)) . "</h5>";
+    echo "<h5>Inventory Report for " . date("F Y", strtotime($month)) . "</h5>";
     echo "<table class='table table-bordered'><tr><th>ID</th><th>Name</th><th>Stock</th><th>Supplier</th></tr>";
 
-    while ($row = $result->fetch_assoc()) {
+    while ($row = mysqli_fetch_assoc($result)) {
         echo "<tr><td>{$row['id']}</td><td>{$row['name']}</td><td>{$row['stock']}</td><td>{$row['supplier']}</td></tr>";
     }
     echo "</table>";
@@ -32,20 +32,17 @@ function generateInventoryReport() {
 
 function generatePatientReport() {
     global $conn;
-    $patient_name = $_POST['patient_name'];
+    $student_id = $_POST['student_id'];
+    $student_idEscaped = mysqli_real_escape_string($conn, $student_id);
 
-    $query = "SELECT * FROM admitted_patients WHERE patient_name LIKE ?";
-    $stmt = $conn->prepare($query);
-    $patient_name = "%$patient_name%";
-    $stmt->bind_param("s", $patient_name);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $query = "SELECT * FROM admissions WHERE student_id = '$student_idEscaped'";
+    $result = mysqli_query($conn, $query);
 
-    echo "<h5>Report for Patient: " . htmlspecialchars($_POST['patient_name']) . "</h5>";
+    echo "<h5>Admission Report for Student ID: " . htmlspecialchars($student_id) . "</h5>";
     echo "<table class='table table-bordered'><tr><th>ID</th><th>Name</th><th>Sickness</th><th>Date Admitted</th></tr>";
 
-    while ($row = $result->fetch_assoc()) {
-        echo "<tr><td>{$row['id']}</td><td>{$row['patient_name']}</td><td>{$row['sickness']}</td><td>{$row['date_admitted']}</td></tr>";
+    while ($row = mysqli_fetch_assoc($result)) {
+        echo "<tr><td>{$row['id']}</td><td>{$row['firstname']} {$row['lastname']}</td><td>{$row['diagnosis']}</td><td>{$row['created_at']}</td></tr>";
     }
     echo "</table>";
 }
@@ -53,18 +50,36 @@ function generatePatientReport() {
 function generateCasesReport() {
     global $conn;
     $month = $_POST['month'];
+    $monthEscaped = mysqli_real_escape_string($conn, $month);
 
-    $query = "SELECT sickness, COUNT(*) AS total_cases FROM admitted_patients WHERE MONTH(date_admitted) = MONTH(?) AND YEAR(date_admitted) = YEAR(?) GROUP BY sickness";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("ss", $month, $month);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $query = "SELECT diagnosis, COUNT(*) AS total_cases FROM admissions WHERE MONTH(created_at) = MONTH('$monthEscaped') AND YEAR(created_at) = YEAR('$monthEscaped') GROUP BY diagnosis";
+    $result = mysqli_query($conn, $query);
 
-    echo "<h5>Monthly Admitted Cases Report for " . date("F Y", strtotime($month)) . "</h5>";
+    echo "<h5>Monthly Admitted Cases Report</h5>";
     echo "<table class='table table-bordered'><tr><th>Sickness</th><th>Total Cases</th></tr>";
 
-    while ($row = $result->fetch_assoc()) {
-        echo "<tr><td>{$row['sickness']}</td><td>{$row['total_cases']}</td></tr>";
+    while ($row = mysqli_fetch_assoc($result)) {
+        echo "<tr><td>{$row['diagnosis']}</td><td>{$row['total_cases']}</td></tr>";
+    }
+    echo "</table>";
+}
+
+function generateMedicineStockReport() {
+    global $conn;
+    $month = $_POST['month'];
+    $monthEscaped = mysqli_real_escape_string($conn, $month);
+
+    $query = "SELECT m.name, m.category, ms.quantity, ms.transaction_type, ms.created_at 
+              FROM medicine_stocks ms
+              JOIN medicines m ON ms.medicine_id = m.id
+              WHERE MONTH(ms.created_at) = MONTH('$monthEscaped') AND YEAR(ms.created_at) = YEAR('$monthEscaped')";
+    $result = mysqli_query($conn, $query);
+
+    echo "<h5>Medicine Stock Report for " . date("F Y", strtotime($month)) . "</h5>";
+    echo "<table class='table table-bordered'><tr><th>Medicine</th><th>Category</th><th>Quantity</th><th>Transaction Type</th><th>Date</th></tr>";
+
+    while ($row = mysqli_fetch_assoc($result)) {
+        echo "<tr><td>{$row['name']}</td><td>{$row['category']}</td><td>{$row['quantity']}</td><td>{$row['transaction_type']}</td><td>{$row['created_at']}</td></tr>";
     }
     echo "</table>";
 }

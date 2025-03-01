@@ -63,7 +63,7 @@
         <div id="medicalMenu" class="collapse" aria-labelledby="medicalHeading" data-parent="#accordionSidebar">
             <div class="bg-dark py-2 collapse-inner rounded">
                 <a class="collapse-item text-white" href="../medical/view.php">Medical Records</a>
-                <a class="collapse-item text-white" href="../medical/disease-list.php">Disease List</a>
+                <!-- <a class="collapse-item text-white" href="../medical/disease-list.php">Disease List</a> -->
                 <a class="collapse-item text-white" href="../medical/schedule.php">Medical Schedule</a>
             </div>
         </div>
@@ -89,12 +89,12 @@
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#reportMenu"
             aria-expanded="true" aria-controls="reportMenu">
             <i class="fas fa-chart-line"></i>
-            <span>Reports & Reminders</span>
+            <span>Reports</span>
         </a>
         <div id="reportMenu" class="collapse" aria-labelledby="reportHeading" data-parent="#accordionSidebar">
             <div class="bg-dark py-2 collapse-inner rounded">
-                <a class="collapse-item text-white" href="../reports/view.php">Reports</a>
-                <a class="collapse-item text-white" href="../reports/reminders.php">Reminders</a>
+                <a class="collapse-item text-white" href="../report">Reports</a>
+                <!-- <a class="collapse-item text-white" href="../reports/reminders.php">Reminders</a> -->
             </div>
         </div>
     </li>
