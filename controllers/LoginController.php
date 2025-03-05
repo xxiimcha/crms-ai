@@ -1,6 +1,6 @@
 <?php
-session_start();
-include('../config/database.php'); // Database connection
+session_start(); // Start session
+include('../config/database.php');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = trim($_POST['email']);
@@ -25,10 +25,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         if ($hashed_password === $user['password']) { // Compare MD5 hashes
+            // Store user data in session
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['name'];
             $_SESSION['role'] = $user['role'];
-            echo json_encode(["status" => "success", "message" => "Login successful.", "redirect" => "common/dashboard.php"]);
+
+            echo json_encode(["status" => "success", "message" => "Login successful.", "redirect" => "../common/dashboard.php"]);
         } else {
             echo json_encode(["status" => "error", "message" => "Invalid credentials."]);
         }
