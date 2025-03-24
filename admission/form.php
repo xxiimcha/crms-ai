@@ -36,7 +36,7 @@
                                         </div>
                                     </div>
 
-                                    <!-- Student Information -->
+                                    <!-- Student Fields -->
                                     <div id="studentFields" class="d-none">
                                         <div class="row">
                                             <div class="col-md-4">
@@ -45,15 +45,21 @@
                                                     <input type="text" name="student_number" id="student_number" class="form-control" placeholder="Enter Student Number">
                                                 </div>
                                             </div>
-                                        </div>
-
-                                        <div id="studentInfo" class="row d-none">
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label>First Name</label>
-                                                    <input type="text" id="student_firstname" class="form-control" readonly>
+                                                    <label>Section</label>
+                                                    <input type="text" name="section" id="student_section" class="form-control" readonly>
                                                 </div>
                                             </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Year Level</label>
+                                                    <input type="text" name="year_level" id="student_year_level" class="form-control" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label>Last Name</label>
@@ -62,39 +68,84 @@
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label>Email</label>
-                                                    <input type="email" id="student_email" class="form-control" readonly>
+                                                    <label>First Name</label>
+                                                    <input type="text" id="student_firstname" class="form-control" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Middle Name</label>
+                                                    <input type="text" id="student_middlename" class="form-control" readonly>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <!-- Manual Input for Non-Students -->
-                                    <div id="manualFields" class="d-none">
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label>First Name</label>
-                                                    <input type="text" name="firstname" class="form-control">
+                                                    <label>Sex</label>
+                                                    <input type="text" id="student_sex" class="form-control" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label>Last Name</label>
-                                                    <input type="text" name="lastname" class="form-control">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label>Email</label>
-                                                    <input type="email" name="email" class="form-control">
+                                                    <label>Age</label>
+                                                    <input type="text" id="student_age" class="form-control" readonly>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
 
+                                    <!-- Professor Fields -->
+                                    <div id="professorFields" class="d-none">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Employee ID</label>
+                                                    <input type="text" name="employee_id" id="employee_id" class="form-control" placeholder="Enter Employee ID">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Last Name</label>
+                                                    <input type="text" id="professor_lastname" class="form-control" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>First Name</label>
+                                                    <input type="text" id="professor_firstname" class="form-control" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Middle Name</label>
+                                                    <input type="text" id="professor_middlename" class="form-control" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Sex</label>
+                                                    <input type="text" id="professor_sex" class="form-control" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Age</label>
+                                                    <input type="text" id="professor_age" class="form-control" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+
 
                             <!-- Medical Information Section -->
                             <div class="card mb-4">
@@ -241,79 +292,102 @@
             $("#lab_procedures_container").toggleClass("d-none", !$(this).is(":checked"));
             $("#lab_date_container").toggleClass("d-none", !$(this).is(":checked"));
         });
-
-        $("#student_number").on("input", function () {
-            var studentNumber = $(this).val().trim();
-            if (studentNumber.length > 0) {
-                $.ajax({
-                    url: 'https://enrollment.bcp-sms1.com/fetch_students/fetch_students_info_nova.php',
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function (response) {
-                        let studentFound = false;
-                        response.forEach(student => {
-                            if (student.studentId === studentNumber) {
-                                $("#student_firstname").val(student.name.split(" ")[0]);
-                                $("#student_lastname").val(student.name.split(" ").slice(1).join(" "));
-                                $("#student_email").val(student.email);
-                                $("#studentInfo").removeClass("d-none");
-                                studentFound = true;
-                            }
-                        });
-
-                        if (!studentFound) {
-                            $("#studentInfo").addClass("d-none");
-                        }
-                    },
-                    error: function () {
-                        $("#studentInfo").addClass("d-none");
-                    }
-                });
-            }
-        });
     });
 
     $(document).ready(function () {
+        // Show the correct fields based on the admission type
         $("#admission_type").change(function () {
             var type = $(this).val();
             if (type === "Student") {
                 $("#studentFields").removeClass("d-none");
-                $("#manualFields").addClass("d-none");
+                $("#manualFields, #professorFields").addClass("d-none");
+            } else if (type === "Professor") {
+                $("#professorFields").removeClass("d-none");
+                $("#manualFields, #studentFields").addClass("d-none");
             } else {
-                $("#studentFields").addClass("d-none");
                 $("#manualFields").removeClass("d-none");
+                $("#studentFields, #professorFields").addClass("d-none");
             }
         });
 
+        // Fetch Student Details
         $("#student_number").on("input", function () {
             var studentNumber = $(this).val().trim();
             if (studentNumber.length > 0) {
                 $.ajax({
-                    url: '../controllers/AdmissionController.php?action=get_student_details',
-                    type: 'GET',
-                    data: { student_number: studentNumber },
-                    dataType: 'json',
+                    url: "../controllers/proxy.php?type=student",
+                    type: "GET",
+                    dataType: "json",
                     success: function (response) {
-                        if (response.success) {
-                            $("#student_firstname").val(response.student.firstname);
-                            $("#student_lastname").val(response.student.lastname);
-                            $("#student_email").val(response.student.email);
-                            $("#student_year_level").val(response.student.year_level);
-                            $("#student_course").val(response.student.course);
-                            $("#studentInfo, #studentAcademicInfo").removeClass("d-none");
-                        } else {
-                            $("#studentInfo, #studentAcademicInfo").addClass("d-none");
+                        if (response.status === "success") {
+                            let studentFound = false;
+                            response.users.forEach(student => {
+                                if (student.student_info.student_number === studentNumber) {
+                                    $("#student_firstname").val(student.student_info.first_name);
+                                    $("#student_lastname").val(student.student_info.last_name);
+                                    $("#student_middlename").val(student.student_info.middle_name);
+                                    $("#student_section").val(student.student_info.section);
+                                    $("#student_year_level").val(student.student_info.year_level);
+                                    $("#student_sex").val(student.student_info.gender);
+                                    $("#student_age").val(calculateAge(student.student_info.birth_date));
+                                    $("#studentFields").removeClass("d-none");
+                                    studentFound = true;
+                                }
+                            });
+
+                            if (!studentFound) {
+                                $("#studentFields input").val("");
+                            }
                         }
                     }
                 });
             }
         });
 
-        $("#lab_schedule_checkbox").change(function () {
-            $("#lab_procedures_container, #lab_date_container").toggleClass("d-none", !$(this).is(":checked"));
+        // Fetch Professor Details
+        $("#employee_id").on("input", function () {
+            var empId = $(this).val().trim();
+            if (empId.length > 0) {
+                $.ajax({
+                    url: "../controllers/proxy.php?type=professor",
+                    type: "GET",
+                    dataType: "json",
+                    success: function (response) {
+                        if (response.success) {
+                            let professorFound = false;
+                            response.data.forEach(professor => {
+                                if (professor.user_id === empId) {
+                                    $("#professor_firstname").val(professor.firstname);
+                                    $("#professor_lastname").val(professor.lastname);
+                                    $("#professor_middlename").val(""); // No middle name in API
+                                    $("#professor_sex").val(professor.gender);
+                                    $("#professor_age").val(professor.age);
+                                    professorFound = true;
+                                }
+                            });
+
+                            if (!professorFound) {
+                                $("#professorFields input").val("");
+                            }
+                        }
+                    }
+                });
+            }
         });
+
+        // Helper function to calculate age from birthdate
+        function calculateAge(birthDate) {
+            let today = new Date();
+            let birth = new Date(birthDate);
+            let age = today.getFullYear() - birth.getFullYear();
+            let monthDiff = today.getMonth() - birth.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+                age--;
+            }
+            return age;
+        }
     });
-    
+
     document.addEventListener("DOMContentLoaded", function () {
         var symptomsInput = document.querySelector("#symptoms");
         var tagifySymptoms = new Tagify(symptomsInput, {
