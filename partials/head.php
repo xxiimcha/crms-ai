@@ -30,6 +30,7 @@ if (!isset($_SESSION['user_id'])) {
     <!-- Tagify JS -->
     <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Toastr Notifications -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
