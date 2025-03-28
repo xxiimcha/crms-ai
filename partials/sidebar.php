@@ -20,7 +20,6 @@
         </a>
     </li>
 
-    <!-- Divider -->
     <hr class="sidebar-divider">
 
     <!-- Nav Item - Student -->
@@ -33,7 +32,6 @@
         <div id="studentMenu" class="collapse" aria-labelledby="studentHeading" data-parent="#accordionSidebar">
             <div class="bg-dark py-2 collapse-inner rounded">
                 <a class="collapse-item text-white" href="../student/view.php">Student List</a>
-                <!-- <a class="collapse-item text-white" href="../student/form.php">Add Student</a> -->
             </div>
         </div>
     </li>
@@ -63,7 +61,6 @@
         <div id="medicalMenu" class="collapse" aria-labelledby="medicalHeading" data-parent="#accordionSidebar">
             <div class="bg-dark py-2 collapse-inner rounded">
                 <a class="collapse-item text-white" href="../medical/view.php">Medical Records</a>
-                <!-- <a class="collapse-item text-white" href="../medical/disease-list.php">Disease List</a> -->
                 <a class="collapse-item text-white" href="../medical/schedule.php">Medical Schedule</a>
             </div>
         </div>
@@ -84,7 +81,7 @@
         </div>
     </li>
 
-    <!-- Nav Item - Reports & Reminders -->
+    <!-- Nav Item - Reports -->
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#reportMenu"
             aria-expanded="true" aria-controls="reportMenu">
@@ -94,10 +91,36 @@
         <div id="reportMenu" class="collapse" aria-labelledby="reportHeading" data-parent="#accordionSidebar">
             <div class="bg-dark py-2 collapse-inner rounded">
                 <a class="collapse-item text-white" href="../report">Reports</a>
-                <!-- <a class="collapse-item text-white" href="../reports/reminders.php">Reminders</a> -->
             </div>
         </div>
     </li>
+
+    <!-- Nav Item - Announcements (Visible to staff and admin) -->
+    <?php if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'staff'): ?>
+    <li class="nav-item">
+        <a class="nav-link" href="../announcement/index.php">
+            <i class="fas fa-bullhorn"></i>
+            <span>Announcements</span>
+        </a>
+    </li>
+    <?php endif; ?>
+
+    <!-- Nav Item - User Management (Only visible to admin) -->
+    <?php if ($_SESSION['role'] === 'admin'): ?>
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#userMenu"
+            aria-expanded="true" aria-controls="userMenu">
+            <i class="fas fa-users-cog"></i>
+            <span>User Management</span>
+        </a>
+        <div id="userMenu" class="collapse" aria-labelledby="userHeading" data-parent="#accordionSidebar">
+            <div class="bg-dark py-2 collapse-inner rounded">
+                <a class="collapse-item text-white" href="../users/view.php">User List</a>
+                <a class="collapse-item text-white" href="../users/form.php">Add User</a>
+            </div>
+        </div>
+    </li>
+    <?php endif; ?>
 
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">

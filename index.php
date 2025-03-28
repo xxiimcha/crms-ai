@@ -2,62 +2,109 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Clinic Management System</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinic Management System - Login</title>
 
-    <link href="./assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
-    <link href="./assets/css/sb-admin-2.min.css" rel="stylesheet">
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="./assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            background: #ffffff;
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #ffffff;
+            color: #000;
             display: flex;
             align-items: center;
             justify-content: center;
             height: 100vh;
-            margin: 0;
         }
 
         .login-container {
-            max-width: 400px;
+            background-color: #fff;
+            border-radius: 16px;
+            padding: 48px;
             width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease-in-out;
         }
 
-        .card {
-            border-radius: 15px;
-            padding: 40px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        .login-container:hover {
+            box-shadow: 0 14px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .logo {
+            display: block;
+            margin: 0 auto 24px;
+            width: 80px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 32px;
             text-align: center;
         }
 
         .form-group {
-            text-align: left;
+            margin-bottom: 20px;
         }
 
-        .form-control-user {
-            border-radius: 10px;
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
             padding: 14px;
+            border-radius: 10px;
+            border: 1px solid #000;
             font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            border-color: #333;
         }
 
         .btn-user {
-            font-size: 1.2rem;
-            padding: 12px;
-            border-radius: 10px;
-            background: #000000;
-            color: #ffffff;
+            display: block;
+            width: 100%;
+            background-color: #000;
+            color: #fff;
             border: none;
-            transition: background 0.3s;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s ease;
         }
 
         .btn-user:hover {
-            background: #333333;
+            background-color: #333;
         }
 
         .alert {
             display: none;
+            background: #ffeded;
+            color: #b70000;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
         }
 
         .spinner-overlay {
@@ -65,20 +112,16 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
             justify-content: center;
             align-items: center;
-            z-index: 1000;
-        }
-
-        .logo {
-            width: 120px;
-            margin-bottom: 20px;
+            z-index: 999;
         }
     </style>
 </head>
+
 <body>
     <div class="spinner-overlay">
         <div class="spinner-border text-light" role="status">
@@ -87,28 +130,28 @@
     </div>
 
     <div class="login-container">
-        <div class="card">
-            <div class="text-center">
-                <img src="./assets/img/logo.png" alt="Clinic Logo" class="logo">
-                <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
+        <img src="./assets/img/logo.png" alt="Clinic Logo" class="logo">
+        <h1>Welcome Back</h1>
+
+        <div id="alertMessage" class="alert"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
             </div>
-            <div id="alertMessage" class="alert alert-danger"></div>
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="email">Email Address</label>
-                    <input type="email" class="form-control form-control-user" id="email" name="email" placeholder="Enter Email..." required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" class="form-control form-control-user" id="password" name="password" placeholder="Password" required>
-                </div>
-                <button type="submit" class="btn btn-user btn-block">Login</button>
-            </form>
-        </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            </div>
+
+            <button type="submit" class="btn-user">Login</button>
+        </form>
     </div>
 
     <script>
-        document.getElementById("loginForm").addEventListener("submit", async function(event) {
+        document.getElementById("loginForm").addEventListener("submit", async function (event) {
             event.preventDefault();
 
             let email = document.getElementById("email").value;
@@ -126,14 +169,11 @@
                     headers: {
                         "Content-Type": "application/x-www-form-urlencoded",
                     },
-                    body: new URLSearchParams({
-                        email: email,
-                        password: password
-                    })
+                    body: new URLSearchParams({ email, password })
                 });
 
                 let result = await response.json();
-                
+
                 spinnerOverlay.style.display = "none";
                 loginButton.disabled = false;
 
@@ -141,15 +181,16 @@
                     window.location.href = result.redirect;
                 } else {
                     alertMessage.style.display = "block";
-                    alertMessage.innerHTML = result.message;
+                    alertMessage.innerText = result.message;
                 }
             } catch (error) {
                 spinnerOverlay.style.display = "none";
                 loginButton.disabled = false;
                 alertMessage.style.display = "block";
-                alertMessage.innerHTML = "An error occurred. Please try again.";
+                alertMessage.innerText = "An error occurred. Please try again.";
             }
         });
     </script>
 </body>
+
 </html>
