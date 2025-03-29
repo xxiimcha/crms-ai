@@ -1,11 +1,21 @@
 Disease,Symptom_1,Symptom_2,Symptom_3,Symptom_4,Symptom_5
 Flu,fever,cough,sore throat,fatigue,muscle aches
 COVID-19,fever,cough,shortness of breath,loss of taste,loss of smell
-Common Cold,runny nose,sneezing,sore throat,cough,
+Common Cold,runny nose,sneezing,sore throat,,cough
 Migraine,headache,nausea,light sensitivity,,
 Overfatigue,dizzy,blurred vision,headache,,
-Hypertension,headache,blurred vision,dizziness,nosebleeds,
+Hypertension,headache,blurred vision,dizziness,,nosebleeds
 Diabetes,frequent urination,increased thirst,fatigue,,
 Gastroenteritis,diarrhea,vomiting,stomach cramps,,
 Allergic Rhinitis,sneezing,runny nose,itchy eyes,,
 Pneumonia,fever,cough,chest pain,,
+Asthma,shortness of breath,wheezing,cough,chest tightness,
+Bronchitis,cough,mucus production,fatigue,shortness of breath,
+Chickenpox,fever,itchy rash,tiredness,loss of appetite,
+Dengue,high fever,headache,joint pain,skin rash,nausea
+Tonsillitis,sore throat,fever,swollen tonsils,difficulty swallowing,
+Sinusitis,facial pain,runny nose,nasal congestion,headache,
+Urinary Tract Infection (UTI),painful urination,frequent urination,lower abdominal pain,cloudy urine,
+Tuberculosis (TB),persistent cough,weight loss,fever,night sweats,
+Measles,fever,cough,runny nose,skin rash,red eyes
+Anemia,fatigue,pale skin,shortness of breath,dizziness,

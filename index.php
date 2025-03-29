@@ -63,7 +63,7 @@
             font-weight: 500;
         }
 
-        input[type="email"],
+        input[type="text"],
         input[type="password"] {
             width: 100%;
             padding: 14px;
@@ -74,7 +74,7 @@
             transition: border-color 0.2s;
         }
 
-        input[type="email"]:focus,
+        input[type="text"]:focus,
         input[type="password"]:focus {
             border-color: #333;
         }
@@ -138,7 +138,7 @@
         <form id="loginForm">
             <div class="form-group">
                 <label for="email">Email Address</label>
-                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                <input type="text" id="email" name="email" placeholder="Enter your email" required>
             </div>
 
             <div class="form-group">

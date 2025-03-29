@@ -1,4 +1,4 @@
-<?php include('../partials/head.php');?>
+<?php include('../partials/head.php'); ?>
 
 <div id="wrapper">
     <?php include('../partials/sidebar.php'); ?>
@@ -28,30 +28,21 @@
                     </div>
                 </div>
 
-                <!-- Medical Schedule Section (Dynamically Loaded) -->
-                <!-- <div class="row">
+                <!-- Pending Laboratory Schedule Table -->
+                <div class="row">
                     <div class="col-lg-12">
                         <div class="card shadow mb-4">
                             <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">Medical Schedule</h6>
+                                <h6 class="m-0 font-weight-bold text-primary">Pending Laboratory Schedule</h6>
                             </div>
                             <div class="card-body">
-                                <div id="medicalScheduleContainer">
-                                    <p class="text-center">Loading medical schedule...</p>
+                                <div id="labScheduleContainer">
+                                    <p class="text-center">Loading lab schedule...</p>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div> -->
-
-                <!-- Lab Schedule Overview -->
-                <!-- <div class="row">
-                    <div class="col-lg-12">
-                        <div id="labScheduleContainer">
-                            <p class="text-center">Loading lab schedule...</p>
-                        </div>
-                    </div>
-                </div>-->
+                </div>
 
             </div>
         </div>
@@ -72,19 +63,16 @@
 <script>
     $(document).ready(function () {
         loadDashboardData();
-        loadMedicalSchedule();
         loadLabSchedule();
 
-        /** 
-         * Function to Load Dashboard Data 
-         */
+        /** Load Dashboard Data */
         function loadDashboardData() {
             $.ajax({
                 url: '../controllers/DashboardController.php?action=all',
                 type: 'GET',
                 dataType: 'json',
                 success: function (response) {
-                    console.log("Dashboard Data Response:", response); // Debugging
+                    console.log("Dashboard Data Response:", response);
                     if (response.success) {
                         $("#dashboard-cards").html(response.html);
 
@@ -103,11 +91,9 @@
             });
         }
 
-        /** 
-         * Function to Update Medical Cases Chart 
-         */
+        /** Update Medical Cases Chart */
         function updateMedicalChart(labels, data) {
-            $("#admissionsChart").html(""); // Clear previous chart
+            $("#admissionsChart").html("");
             var options = {
                 chart: {
                     type: 'line',
@@ -133,23 +119,7 @@
             chart.render();
         }
 
-        /**
-         * Function to Load Medical Schedule
-         */
-        function loadMedicalSchedule() {
-            $.ajax({
-                url: '../controllers/DashboardController.php?action=medical_schedule',
-                type: 'GET',
-                dataType: 'html',
-                success: function (response) {
-                    $("#medicalScheduleContainer").html(response);
-                },
-                error: function () {
-                    $("#medicalScheduleContainer").html("<p class='text-center text-danger'>Failed to load medical schedule.</p>");
-                }
-            });
-        }
-
+       /** Load Lab Schedule */
         function loadLabSchedule() {
             $.ajax({
                 url: '../controllers/DashboardController.php?action=lab_schedule',
@@ -157,16 +127,17 @@
                 dataType: 'json',
                 success: function (response) {
                     if (response.success) {
-                        $("#labScheduleContainer").html(response.labSchedule);
+                        $("#labScheduleContainer").html(response.html);
                     } else {
-                        $("#labScheduleContainer").html("<p class='text-center text-danger'>Failed to load lab schedule.</p>");
+                        $("#labScheduleContainer").html("<p class='text-center text-danger'>No pending lab schedules.</p>");
                     }
                 },
                 error: function () {
-                    $("#labScheduleContainer").html("<p class='text-center text-danger'>Failed to fetch data.</p>");
+                    $("#labScheduleContainer").html("<p class='text-center text-danger'>Failed to load lab schedule.</p>");
                 }
             });
         }
+
 
     });
 </script>

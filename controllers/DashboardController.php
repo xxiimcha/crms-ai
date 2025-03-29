@@ -42,7 +42,7 @@ function getMedicalChartData($conn) {
               FROM admissions 
               WHERE status = 'Completed' 
               GROUP BY DATE(created_at) 
-              ORDER BY created_at ASC"; // Ensure 'date_completed' exists
+              ORDER BY created_at ASC";
 
     $result = $conn->query($query);
 
@@ -56,64 +56,49 @@ function getMedicalChartData($conn) {
     return $chartData;
 }
 
+/**
+ * Function to fetch only Pending Laboratory Schedule
+ */
 function getLabScheduleOverview($conn) {
-    /*$query = "SELECT lt.id, lt.admission_id, lt.schedule_time, lt.status, 
-                     a.admission_type, a.firstname, a.lastname, lt.cbc_result, lt.xray_result, lt.urine_result
-              FROM lab_tests lt
-              LEFT JOIN admissions a ON lt.admission_id = a.id
-              ORDER BY lt.schedule_time ASC";
-    
+    $query = "
+        SELECT lt.test_name, lt.scheduled_date, a.person_id
+        FROM lab_tests lt
+        LEFT JOIN admissions a ON lt.admission_id = a.id
+        WHERE lt.status = 'Pending'
+        ORDER BY lt.scheduled_date ASC
+    ";
+
     $result = $conn->query($query);
-    $html = '<h6 class="m-0 font-weight-bold text-primary">Lab Schedule Overview</h6>
-             <div class="table-responsive">
-                 <table class="table table-bordered">
-                     <thead>
-                         <tr>
-                             <th>Name</th>
-                             <th>Type</th>
-                             <th>Schedule Time</th>
-                             <th>Status</th>
-                             <th>Results</th>
-                         </tr>
-                     </thead>
-                     <tbody>';
+
+    $html = '<div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Person ID</th>
+                    <th>Test Name</th>
+                    <th>Scheduled Date</th>
+                </tr>
+            </thead>
+            <tbody>';
 
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
-            $name = trim($row["firstname"] . " " . $row["lastname"]);
-            $statusBadge = match ($row["status"]) {
-                "Completed" => '<span class="badge badge-success">Completed</span>',
-                "Ongoing" => '<span class="badge badge-warning">Ongoing</span>',
-                default => '<span class="badge badge-danger">Pending</span>',
-            };
-
-            // Build result links if available
-            $results = [];
-            if (!empty($row["cbc_result"])) $results[] = '<a href="uploads/' . $row["cbc_result"] . '" target="_blank">CBC</a>';
-            if (!empty($row["xray_result"])) $results[] = '<a href="uploads/' . $row["xray_result"] . '" target="_blank">X-Ray</a>';
-            if (!empty($row["urine_result"])) $results[] = '<a href="uploads/' . $row["urine_result"] . '" target="_blank">Urine</a>';
-            
-            $resultsDisplay = !empty($results) ? implode(" | ", $results) : "No Results";
-
             $html .= '<tr>
-                        <td>' . $name . '</td>
-                        <td>' . $row["admission_type"] . '</td>
-                        <td>' . date("Y-m-d H:i A", strtotime($row["schedule_time"])) . '</td>
-                        <td>' . $statusBadge . '</td>
-                        <td>' . $resultsDisplay . '</td>
+                        <td>' . htmlspecialchars($row["person_id"]) . '</td>
+                        <td>' . htmlspecialchars($row["test_name"]) . '</td>
+                        <td>' . date("F j, Y - g:i A", strtotime($row["scheduled_date"])) . '</td>
                       </tr>';
         }
     } else {
-        $html .= '<tr><td colspan="5" class="text-center">No lab schedules available.</td></tr>';
+        $html .= '<tr><td colspan="3" class="text-center">No pending lab schedules.</td></tr>';
     }
 
     $html .= '</tbody></table></div>';
-    return $html;*/
+    return $html;
 }
 
-/**
- * Fetch all dashboard data
- */
+
+// Determine action
 $action = $_GET['action'] ?? 'all';
 
 switch ($action) {
@@ -142,8 +127,9 @@ switch ($action) {
         break;
 
     case 'lab_schedule':
+        $labSchedule = getLabScheduleOverview($conn);
         $response["success"] = true;
-        $response["html"] = getLabScheduleOverview($conn);
+        $response["html"] = $labSchedule;
         break;
 
     case 'all':
