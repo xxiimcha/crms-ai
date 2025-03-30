@@ -208,7 +208,7 @@ function fetchMedicalRecords() {
     global $conn;
     $response = ["success" => false, "records" => []];
 
-    // Fetch all medical records from the local database
+    // Fetch all medical records from local DB
     $medicalQuery = "SELECT * FROM medical_records";
     $medicalResult = mysqli_query($conn, $medicalQuery);
 
@@ -222,35 +222,37 @@ function fetchMedicalRecords() {
         $medicalRecords[$record['student_id']] = $record;
     }
 
-    // Fetch student details from the external API
-    $api_url = "https://enrollment.bcp-sms1.com/fetch_students/fetch_students_info_nova.php";
+    // Fetch student data from new Registrar API
+    $api_url = "https://registrar.bcp-sms1.com/api/students.php";
     $apiResponse = file_get_contents($api_url);
-    $students = json_decode($apiResponse, true);
+    $decoded = json_decode($apiResponse, true);
 
-    if (!$students) {
-        echo json_encode(["success" => false, "message" => "Failed to retrieve student data from API."]);
+    if (!$decoded || $decoded['status'] !== 'success' || !isset($decoded['users'])) {
+        echo json_encode(["success" => false, "message" => "Failed to retrieve student data from Registrar API."]);
         return;
     }
 
-    // Match students with their medical records
+    $students = $decoded['users'];
+
+    // Match students with medical records
     foreach ($medicalRecords as $studentId => $medicalData) {
         $student = null;
 
-        // Find the student details from the API
         foreach ($students as $s) {
-            if ($s['studentId'] == $studentId) {
+            if (isset($s['student_info']['student_id']) && $s['student_info']['student_id'] == $studentId) {
+                $info = $s['student_info'];
                 $student = [
-                    "student_id" => $s['studentId'],
-                    "student_name" => $s['name'],
-                    "year_level" => $s['level'],
-                    "course" => $s['course'],
-                    "email" => $s['email']
+                    "student_id" => $info['student_id'],
+                    "student_number" => $info['student_number'],
+                    "student_name" => $info['first_name'] . ' ' . $info['last_name'],
+                    "year_level" => $info['year_level'],
+                    "course" => $info['course'],
+                    "email" => $info['email']
                 ];
                 break;
             }
         }
 
-        // If student details are found, merge them with the medical record
         if ($student) {
             $response["records"][] = array_merge($student, $medicalData);
         }
