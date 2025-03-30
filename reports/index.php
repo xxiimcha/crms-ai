@@ -53,6 +53,9 @@
                             <a href="#" id="exportPdfBtn" class="btn btn-sm btn-danger ml-2">
                                 <i class="fas fa-file-pdf"></i> Export PDF
                             </a>
+                            <a href="#" id="exportExcelBtn" class="btn btn-sm btn-success ml-2">
+                                <i class="fas fa-file-excel"></i> Export Excel
+                            </a>
                         </div>
                     </div>
 
@@ -84,7 +87,6 @@
 <?php include('../partials/foot.php'); ?>
 
 <script>
-
     $('#exportPdfBtn').on('click', function (e) {
         e.preventDefault();
 
@@ -94,6 +96,17 @@
 
         // Redirect to PDF generation endpoint with query string
         const exportUrl = `../export/export_pdf.php?report_type=${reportType}&from_date=${fromDate}&to_date=${toDate}`;
+        window.open(exportUrl, '_blank');
+    });
+
+    $('#exportExcelBtn').on('click', function (e) {
+        e.preventDefault();
+
+        const reportType = $('#reportType').val();
+        const fromDate = $('#fromDate').val();
+        const toDate = $('#toDate').val();
+
+        const exportUrl = `../export/export_excel.php?report_type=${reportType}&from_date=${fromDate}&to_date=${toDate}`;
         window.open(exportUrl, '_blank');
     });
 
