@@ -98,7 +98,7 @@
     <!-- Nav Item - Announcements (Visible to staff and admin) -->
     <?php if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'staff'): ?>
     <li class="nav-item">
-        <a class="nav-link" href="../announcement/index.php">
+        <a class="nav-link" href="../announcement">
             <i class="fas fa-bullhorn"></i>
             <span>Announcements</span>
         </a>
@@ -108,17 +108,10 @@
     <!-- Nav Item - User Management (Only visible to admin) -->
     <?php if ($_SESSION['role'] === 'admin'): ?>
     <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#userMenu"
-            aria-expanded="true" aria-controls="userMenu">
+        <a class="nav-link" href="../user/">
             <i class="fas fa-users-cog"></i>
             <span>User Management</span>
         </a>
-        <div id="userMenu" class="collapse" aria-labelledby="userHeading" data-parent="#accordionSidebar">
-            <div class="bg-dark py-2 collapse-inner rounded">
-                <a class="collapse-item text-white" href="../users/view.php">User List</a>
-                <a class="collapse-item text-white" href="../users/form.php">Add User</a>
-            </div>
-        </div>
     </li>
     <?php endif; ?>
 

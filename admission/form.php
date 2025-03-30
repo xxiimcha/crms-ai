@@ -408,7 +408,7 @@
             }
 
             $.ajax({
-                url: "http://localhost:5000/predict",
+                url: "https://crms-ai.onrender.com/predict",
                 type: "POST",
                 contentType: "application/json",
                 data: JSON.stringify({ symptoms: symptomsArray }),
@@ -463,7 +463,7 @@
             }
 
             $.ajax({
-                url: "http://localhost:5000/recommend",
+                url: "https://crms-ai.onrender.com/recommend",
                 type: "POST",
                 contentType: "application/json",
                 data: JSON.stringify({ disease: selectedDiagnosis }),
