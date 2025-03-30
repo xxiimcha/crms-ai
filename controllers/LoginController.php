@@ -4,9 +4,8 @@ include('../config/database.php');
 header('Content-Type: application/json');
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $email = trim($_POST['email']);
+    $email = mysqli_real_escape_string($conn, trim($_POST['email']));
     $password = trim($_POST['password']);
-    $hashed_password = md5($password); // Note: MD5 is not secure for production apps
 
     if (empty($email) || empty($password)) {
         echo json_encode(["status" => "error", "message" => "All fields are required."]);
@@ -20,18 +19,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if ($result && mysqli_num_rows($result) === 1) {
         $user = mysqli_fetch_assoc($result);
 
-        // Check if account is inactive (case-insensitive check)
+        // Check if account is inactive
         if (strtolower($user['status']) !== 'active') {
             echo json_encode(["status" => "error", "message" => "Your account is inactive. Contact admin."]);
             exit;
         }
 
-        // Verify password (MD5 comparison)
-        if ($hashed_password === $user['password']) {
-            // Set session variables
+        // Password verification (update stored password with password_hash())
+        if (password_verify($password, $user['password'])) {
+            // Set session and regenerate session ID
+            session_regenerate_id(true);
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['name'];
             $_SESSION['role'] = $user['role'];
+            $_SESSION['last_activity'] = time(); // for auto logout
 
             echo json_encode([
                 "status" => "success",

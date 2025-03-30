@@ -1,5 +1,12 @@
+
 <?php include('../partials/head.php'); ?>
-<?php include('../config/database.php'); ?>
+<?php 
+
+include('../config/database.php'); 
+
+include('../config/session_check.php');
+require_role(['admin']); // Only admins can access
+?>
 
 <div id="wrapper">
     <?php include('../partials/sidebar.php'); ?>

@@ -90,7 +90,7 @@
         </a>
         <div id="reportMenu" class="collapse" aria-labelledby="reportHeading" data-parent="#accordionSidebar">
             <div class="bg-dark py-2 collapse-inner rounded">
-                <a class="collapse-item text-white" href="../report">Reports</a>
+                <a class="collapse-item text-white" href="../reports">Reports</a>
             </div>
         </div>
     </li>

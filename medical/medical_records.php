@@ -29,7 +29,10 @@ if ($student_id > 0) {
 }
 
 // Fetch medical records from the local database
+
 include('../config/database.php');
+include('../config/session_check.php');
+require_role(['admin', 'staff']); // Allow both admin and staff access
 
 if ($student_id > 0) {
     $medical_query = "SELECT * FROM medical_records WHERE student_id = $student_id ORDER BY created_at DESC";
