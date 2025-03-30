@@ -20,9 +20,9 @@
                             <div class="col-md-3">
                                 <label for="reportType">Report Type</label>
                                 <select id="reportType" class="form-control" name="report_type" required>
-                                    <option value="admissions">Admission Records</option>
-                                    <option value="medical">Medical Records</option>
-                                    <option value="inventory">Medication Inventory</option>
+                                    <option value="admissions_report">Admission Records</option>
+                                    <option value="medical_report">Medical Records</option>
+                                    <option value="inventory_report">Medication Inventory</option>
                                 </select>
                             </div>
                             <div class="col-md-3">
@@ -50,6 +50,9 @@
                             <button class="btn btn-sm btn-secondary" onclick="window.print();">
                                 <i class="fas fa-print"></i> Print
                             </button>
+                            <a href="#" id="exportPdfBtn" class="btn btn-sm btn-danger ml-2">
+                                <i class="fas fa-file-pdf"></i> Export PDF
+                            </a>
                         </div>
                     </div>
 
@@ -81,28 +84,48 @@
 <?php include('../partials/foot.php'); ?>
 
 <script>
+
+    $('#exportPdfBtn').on('click', function (e) {
+        e.preventDefault();
+
+        const reportType = $('#reportType').val();
+        const fromDate = $('#fromDate').val();
+        const toDate = $('#toDate').val();
+
+        // Redirect to PDF generation endpoint with query string
+        const exportUrl = `../export/export_pdf.php?report_type=${reportType}&from_date=${fromDate}&to_date=${toDate}`;
+        window.open(exportUrl, '_blank');
+    });
+
     $(document).ready(function () {
         $('#reportFilterForm').on('submit', function (e) {
             e.preventDefault();
 
+            const reportType = $('#reportType').val();
+            const fromDate = $('#fromDate').val();
+            const toDate = $('#toDate').val();
+
             $.ajax({
-                url: '../controllers/ReportController.php',
+                url: `../controllers/ReportController.php`,
                 type: 'POST',
-                data: $(this).serialize(),
+                data: {
+                    report_type: reportType,
+                    from_date: fromDate,
+                    to_date: toDate
+                },
                 dataType: 'json',
                 success: function (response) {
                     if (response.success) {
                         $('#reportResults').removeClass('d-none');
-                        $('#reportTable thead').html(response.table_header);
-                        $('#reportTable tbody').html(response.table_body);
+                        $('#reportTable thead').html(response.table_header || '');
+                        $('#reportTable tbody').html(response.table_body || '');
                     } else {
                         $('#reportResults').addClass('d-none');
                         alert(response.message);
                     }
                 },
                 error: function () {
-                    $('#reportResults').addClass('d-none');
-                    alert("Something went wrong. Please try again.");
+                    alert("An error occurred while generating the report.");
                 }
             });
         });

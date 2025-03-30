@@ -2,115 +2,104 @@
 include('../config/database.php');
 header('Content-Type: application/json');
 
-$action = $_GET['action'] ?? '';
 $response = ["success" => false, "message" => "Invalid action."];
 
-switch ($action) {
-    case 'inventory_report':
-        generateInventoryReport($conn);
-        break;
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $reportType = $_POST['report_type'] ?? '';
+    $from = $_POST['from_date'] ?? '';
+    $to = $_POST['to_date'] ?? '';
 
-    case 'patient_report':
-        generateIndividualReport($conn);
-        break;
-
-    case 'admission_cases':
-        generateMonthlyAdmissionReport($conn);
-        break;
-
-    case 'medicine_stock':
-        generateMedicineStockReport($conn);
-        break;
-
-    default:
-        echo json_encode($response);
-        break;
-}
-
-function generateInventoryReport($conn) {
-    $month = $_POST['month'] ?? '';
-
-    if (empty($month)) {
+    if (empty($reportType) || empty($from) || empty($to)) {
         echo json_encode(["success" => false, "message" => "All fields are required."]);
-        return;
+        exit;
     }
 
-    $startDate = $month . "-01";
-    $endDate = date("Y-m-t", strtotime($startDate));
+    switch ($reportType) {
+        case 'admissions_report':
+            fetchAdmissionsReport($conn, $from, $to);
+            break;
 
-    $sql = "SELECT * FROM medicines WHERE DATE(created_at) BETWEEN '$startDate' AND '$endDate'";
-    $result = mysqli_query($conn, $sql);
+        case 'medical_report':
+            fetchMedicalReport($conn, $from, $to);
+            break;
 
-    $data = [];
-    while ($row = mysqli_fetch_assoc($result)) {
-        $data[] = $row;
+        case 'inventory_report':
+            fetchInventoryReport($conn, $from, $to);
+            break;
+
+        default:
+            echo json_encode(["success" => false, "message" => "Invalid report type."]);
+            break;
     }
-
-    echo json_encode(["success" => true, "data" => $data]);
 }
 
-function generateIndividualReport($conn) {
-    $student_id = $_POST['student_id'] ?? '';
+function fetchAdmissionsReport($conn, $from, $to) {
+    $query = "SELECT id, admission_type, person_id, diagnosis, status, created_at FROM admissions WHERE DATE(created_at) BETWEEN '$from' AND '$to' ORDER BY created_at DESC";
+    $result = $conn->query($query);
 
-    if (empty($student_id)) {
-        echo json_encode(["success" => false, "message" => "Student ID is required."]);
-        return;
+    $table_body = "";
+    while ($row = $result->fetch_assoc()) {
+        $table_body .= "<tr>
+            <td>{$row['id']}</td>
+            <td>{$row['admission_type']}</td>
+            <td>{$row['person_id']}</td>
+            <td>{$row['diagnosis']}</td>
+            <td>{$row['status']}</td>
+            <td>{$row['created_at']}</td>
+        </tr>";
     }
 
-    $sql = "SELECT * FROM admissions WHERE student_id = '$student_id'";
-    $result = mysqli_query($conn, $sql);
-
-    $data = [];
-    while ($row = mysqli_fetch_assoc($result)) {
-        $data[] = $row;
-    }
-
-    echo json_encode(["success" => true, "data" => $data]);
+    echo json_encode([
+        "success" => true,
+        "table_header" => "<tr><th>ID</th><th>Type</th><th>Person ID</th><th>Diagnosis</th><th>Status</th><th>Date</th></tr>",
+        "table_body" => $table_body
+    ]);
 }
 
-function generateMonthlyAdmissionReport($conn) {
-    $month = $_POST['month'] ?? '';
+function fetchMedicalReport($conn, $from, $to) {
+    $query = "SELECT * FROM medical_records WHERE DATE(created_at) BETWEEN '$from' AND '$to' ORDER BY created_at DESC";
+    $result = $conn->query($query);
 
-    if (empty($month)) {
-        echo json_encode(["success" => false, "message" => "Month is required."]);
-        return;
+    $table_body = "";
+    while ($row = $result->fetch_assoc()) {
+        $table_body .= "<tr>
+            <td>{$row['id']}</td>
+            <td>{$row['student_id']}</td>
+            <td>{$row['hospitalized']}</td>
+            <td>{$row['surgeries']}</td>
+            <td>{$row['medications']}</td>
+            <td>{$row['allergies']}</td>
+            <td>{$row['existing_conditions']}</td>
+            <td>{$row['created_at']}</td>
+        </tr>";
     }
 
-    $startDate = $month . "-01";
-    $endDate = date("Y-m-t", strtotime($startDate));
-
-    $sql = "SELECT * FROM admissions WHERE DATE(created_at) BETWEEN '$startDate' AND '$endDate'";
-    $result = mysqli_query($conn, $sql);
-
-    $data = [];
-    while ($row = mysqli_fetch_assoc($result)) {
-        $data[] = $row;
-    }
-
-    echo json_encode(["success" => true, "data" => $data]);
+    echo json_encode([
+        "success" => true,
+        "table_header" => "<tr><th>ID</th><th>Student ID</th><th>Hospitalized</th><th>Surgeries</th><th>Medications</th><th>Allergies</th><th>Conditions</th><th>Date</th></tr>",
+        "table_body" => $table_body
+    ]);
 }
 
-function generateMedicineStockReport($conn) {
-    $month = $_POST['month'] ?? '';
+function fetchInventoryReport($conn, $from, $to) {
+    $query = "SELECT * FROM medicines WHERE DATE(created_at) BETWEEN '$from' AND '$to' ORDER BY created_at DESC";
+    $result = $conn->query($query);
 
-    if (empty($month)) {
-        echo json_encode(["success" => false, "message" => "Month is required."]);
-        return;
+    $table_body = "";
+    while ($row = $result->fetch_assoc()) {
+        $table_body .= "<tr>
+            <td>{$row['id']}</td>
+            <td>{$row['name']}</td>
+            <td>{$row['brand']}</td>
+            <td>{$row['description']}</td>
+            <td>{$row['dosage']}</td>
+            <td>{$row['created_at']}</td>
+        </tr>";
     }
 
-    $startDate = $month . "-01";
-    $endDate = date("Y-m-t", strtotime($startDate));
-
-    $sql = "SELECT ms.*, m.name AS medicine_name 
-            FROM medicine_stocks ms
-            LEFT JOIN medicines m ON ms.medicine_id = m.id
-            WHERE DATE(ms.created_at) BETWEEN '$startDate' AND '$endDate'";
-    $result = mysqli_query($conn, $sql);
-
-    $data = [];
-    while ($row = mysqli_fetch_assoc($result)) {
-        $data[] = $row;
-    }
-
-    echo json_encode(["success" => true, "data" => $data]);
+    echo json_encode([
+        "success" => true,
+        "table_header" => "<tr><th>ID</th><th>Name</th><th>Brand</th><th>Description</th><th>Dosage</th><th>Date Added</th></tr>",
+        "table_body" => $table_body
+    ]);
 }
